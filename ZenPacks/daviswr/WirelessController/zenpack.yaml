@@ -1,0 +1,523 @@
+name: ZenPacks.daviswr.WirelessController
+
+class_relationships:
+  - Controller(aaaServers) 1:MC AAAServer(controller)
+  - Controller(apGroups) 1:MC APGroup(controller)
+  - Controller(dhcpPools) 1:MC DHCPPool(controller)
+  - Controller(vlanInterfaces) 1:MC vlanInterface(controller)
+  - Controller(wlans) 1:MC WLAN(controller)
+  - APGroup(accessPoints) 1:MC AccessPoint(apGroup)
+  - AccessPoint(apRadios) 1:MC APRadio(accessPoint)
+  # Aruba-specific
+  - ArubaController(arubaRemoteController) 1:MC ArubaRemoteController(controller)
+  # Use stock component classes for CPU, fan, and power
+
+
+classes:
+  DEFAULTS:
+    base: [zenpacklib.Component]
+
+  Controller:
+    base: [zenpacklib.Device]
+    label: Wireless Controller
+    short_label: Controller
+    properties:
+      mobilityDomains:
+        type: lines
+
+  ArubaController:
+    base: [Controller]
+    label: Aruba Mobility Controller
+    short_label: Aruba Controller
+    properties:
+      local:
+        type: boolean
+      master:
+        type: boolean
+      # wlsxSwitchRole
+      role:
+        type: string
+      # wlsxSwitchMasterIp
+      masterIP:
+        type: string
+
+  CiscoController:
+    base: [Controller]
+    label: Cisco Wireless LAN Controller
+    short_label: WLC
+    properties:
+      # agentInventoryMaxNumberOfAPsSupported
+      maxAPs:
+        type: int
+      # How to tell if HA SKU?
+      #role:
+      #  type: string
+
+  CiscoIOSController:
+    base: [Controller]
+    label: Cisco IOS Wireless Controller
+    short_label: IOS WLC
+      
+  AccessPoint:
+    label: Access Point
+    short_label: AP
+    relationships:
+      apRadios:
+        grid_display: false
+    properties:
+      DEFAULTS:
+        type: string
+        grid_display: false
+        details_display: true
+      # Aruba - wlanAPNumRadios
+      # Cisco - bsnAPNumOfSlots
+      radioCount:
+        label: Radio Slots
+        type: int
+        order: 3
+        details_display: false
+      # Aruba - wlanAPLocation, wlanAPSysLocation?
+      # Cisco - bsnAPLocation
+      location:
+        label: Location
+        order: 4
+      # Aruba - wlanAPSwVersion
+      # Cisco - bsnAPSoftwareVersion
+      swVersion:
+        label: Software Version
+        order: 10
+        details_display: false
+      # Aruba - wlanAPModelName
+      # Cisco - bsnAPModel
+      model:
+        label: Model
+        grid_display: true
+        order: 1
+        label_width: 115
+        content_width: 115
+      # Aruba - wlanAPSerialNumber
+      # Cisco - bsnAPSerialNumber
+      serial:
+        label: Serial Number
+        short_label: Serial
+        order: 2
+      # Aruba - wlanAPIpAddress
+      # Cisco - bsnApIpAddress
+      ip:
+        label: IP Address
+        grid_display: true
+        order: 5
+        label_width: 80
+        content_width: 80
+      # Aruba - wlanAPConfigNetmask
+      # Cisco - bsnAPNetmask
+      netmask:
+        label: Netmask
+        order: 6
+        details_display: false
+      # Aruba - wlanAPConfigGateway
+      # Cisco - bsnAPGateway
+      gateway:
+        label: Default Gateway
+        order: 7
+        details_display: false
+      # Aruba - lldpNeighborSysName
+      # Cisco - clcCdpApCacheNeighName
+      neighborName:
+        label: Neighbor Name
+        short_label: Neighbor
+        order: 13
+      # Aruba - lldpNeighborManAddr
+      # Cisco - clcCdpApCacheNeighAddress
+      neighborIp:
+        label: Neighbor IP Address
+        short_label: Neighbor IP
+        order: 14
+      # Aruba - lldpNeighborPortId
+      # Cisco - clcCdpApCacheNeighInterface
+      neighborInterface:
+        label: Neighbor Interface
+        short_label: Neighbor Int
+        order: 16
+
+  ArubaAP:
+    base: [AccessPoint]
+    properties:
+      DEFAULTS:
+        type: string
+        grid_display: false
+        details_display: true
+      # wlanAPHwVersion
+      hwVersion:
+        label: Hardware Version
+        short_label: Hardware
+        type: string
+      # wlanAPUnprovisioned
+      provisioned:
+        label: Provisioned
+        type: boolean
+        # Modeler will have invert the value
+        enum: {true: "clear", false: "critical"}
+        renderer: Zenoss.render.severity
+        label_width: 25
+        content_wdith: 25
+        details_display: false
+      # lldpNeighborChassisId
+      neighborMac:
+        label: Neighbor MAC Address
+        short_label: Neighbor MAC
+      # wlanAPStatus
+      status:
+        label: Status
+        type: int
+        #enum: {1: "Up", 2: "Down"}
+        enum: {1: "clear", 2: "critical"}
+        renderer: Zenoss.render.severity
+        #datapoint: wlanAPStatus_wlanAPStatus
+        grid_display: true
+        order: 17
+        label_width: 25
+        content_width: 25
+        details_display: false
+
+  CiscoAP:
+    base: [AccessPoint]
+    properties:
+      DEFAULTS:
+        type: string
+        grid_display: false
+        details_display: true
+      # bsnAPAdminStatus
+      adminStatus:
+        label: Administrative Status
+        short_label: Admin
+        type: int
+        #enum: {1: "Enabled", 2: "Disabled"}
+        enum: {1: "clear", 2: "critical"}
+        renderer: Zenoss.render.severity
+        #datapoint: bsnAPAdminStatus_bsnAPAdminStatus
+        grid_display: true
+        label_width: 25
+        content_width: 25
+        details_display: false
+      # bsnAPBootVersion
+      bootVersion:
+        label: Boot Version
+        short_label: Boot
+      # bsnAPIOSVersion
+      iosVersion:
+        label: IOS Version
+        short_label: IOS
+      # bsnAPEthernetMacAddress
+      macAddress:
+        label: MAC Address
+        short_label: MAC
+      # clcCdpApCachePlatform
+      neighborModel:
+        label: Neighbor Model
+        order: 15
+      # bsnAPDot3MacAddress
+      radioMacAddress:
+        label: Base Radio MAC Address
+        short_label: Radio MAC
+      # bsnAPOperationStatus
+      status:
+        label: Status
+        type: int
+        #enum: {1: "Associated", 2: "Disassocating", 3: "Downloading"}
+        enum: {1: "clear", 2: "critical", 3: "warning"}
+        renderer: Zenoss.render.severity
+        #datapoint: bsnAPOperationStatus_bsnAPOperationStatus
+        grid_display: true
+        order: 17
+        label_width: 25
+        content_width: 25
+        details_display: false
+
+  APGroup:
+    label: Access Point Group
+    short_label: Group
+    relationships:
+      accessPoints:
+        label_width: 35
+        content_width: 35
+    properties:
+      DEFAULTS:
+        type: string
+        grid_display: true
+        details_display: true
+      # Cisco - bsnAPGroupsVlanDescription
+      description:
+        label: Description
+        order: 2
+        label_width: 300
+        content_width: 300
+
+  APRadio:
+    label: Access Point Radio
+    short_label: Radio
+    relationships:
+      accessPoint:
+        grid_display: false
+    properties:
+      DEFAULTS:
+        type: string
+        grid_display: false
+        details_display: true
+      # Aruba - wlanAPRadioType
+      # Cisco - bsnAPIfType
+      band:
+        label: Band
+        grid_display: true
+        order: 1
+        label_width: 45
+        content_width: 45
+      # Aruba - wlanAPExternalAntenna (on AP)
+      # Cisco - bsnAPIfPhyAntennaType
+      antenna:
+        label: Antenna Type
+        short_label: Antenna
+        grid_display: true
+        order: 4
+        label_width: 55
+        content_width: 55
+      # Aruba - wlanAPRadioChannel
+      # Cisco - bsnAPIfPhyChannelNumber
+      channel:
+        label: Channel Number
+        short_label: Channel
+        type: int
+        grid_display: true
+        order: 2
+        label_width: 40
+        content_width: 40
+      # Aruba - wlanAPdot11aAntennaGain, wlanAPdot11gAntennaGain (on AP)
+      # Cisco - bsnAPIfAntennaGain
+      gain:
+        label: Antenna Gain (dBm)
+        short_label: Gain
+        type: float
+        order: 5
+
+  ArubaAPRadio:
+    base: [APRadio]
+    properties:
+      DEFAULTS:
+        type: string
+        grid_display: false
+        details_display: true
+      # wlanAPRadioNumAssociatedClients
+      clients:
+        label: Associations
+        short_label: Clients
+        type: int
+        grid_display: true
+        details_display: false
+        datapoint: wlanAPRadioNumAssociatedClients_wlanAPRadioNumAssociatedClients
+        order: 20
+        label_width: 35
+        content_width: 35
+      # wlanAPRadioUtilization
+      channelUtil:
+        label: Channel Utilization
+        short_label: Util
+        type: int
+        grid_display: true
+        details_display: false
+        datapoint: wlanAPRadioUtilization_wlanAPRadioUtilization
+        label_width: 35
+        content_width: 35
+      # wlanAPRadioHTMode
+      htMode:
+        label: High-Throughput Mode
+        short_label: HT Mode
+        type: string
+
+  CiscoAPRadio:
+    base: [APRadio]
+    properties:
+      DEFAULTS:
+        type: string
+        grid_display: false
+        details_display: true
+       # bsnAPIfPhyAntennaMode
+       mode:
+        label: Antenna Mode
+        order: 6
+      # bsnAPIfPhyChannelAssignment
+      assignment:
+        label: Channel Assignment
+        short_label: Assignment
+        order: 3
+      # bsnAPIfPhyAntennaDiversity
+      diversity:
+        label: Antenna Diversity
+        short_label: Diversity
+        order: 7
+      # bsnAPIfOperStatus
+      status:
+        label: Operational Status
+        short_label: Status
+        type: int
+        #enum: {1: "Down", 2: "Up"}
+        enum: {1: "critical", 2: "clear"}
+        renderer: Zenoss.render.severity
+        #datapoint: bsnAPIfOperStatus_bsnAPIfOperStatus
+        grid_display: true
+        order: 8
+        label_width: 25
+        content_width: 25
+        details_display: false
+      # bsnApIfNoOfUsers
+      clients:
+        label: Associations
+        short_label: Clients
+        type: int
+        grid_display: true
+        details_display: false
+        datapoint: bsnApIfNoOfUsers_bsnApIfNoOfUsers
+        order: 20
+        label_width: 35
+        content_width: 35
+      # bsnAPIfAdminStatus
+      admin:
+        label: Administrative Status
+        short_label: Admin
+        type: int
+        #enum: {1: "Enabled", 2: "Disabled"}
+        enum: {1: "clear", 2: "critical"}
+        renderer: Zenoss.render.severity
+        #datapoint: bsnAPIfAdminStatus_bsnAPIfAdminStatus
+        grid_display: true
+        order: 9
+        label_width: 25
+        content_width: 25
+        details_display: false
+
+  ArubaRemoteController:
+    label: Aruba Controller
+    short_label: Controller
+
+  ArubaLocalController:
+    base: [ArubaRemoteController]
+    label: Local Controller
+    short_label: Local
+
+  ArubaMasterController:
+    base: [ArubaRemoteController]
+    label: Master Controller
+    short_label: Master
+
+  DHCPPool:
+    label: DHCP Pool
+
+  # "Interfaces" on Cisco WLC (physical interfaces are "ports")
+  # "VLANs" on Aruba
+  VlanInterface:
+    label: VLAN Interface
+    short_label: VLAN
+
+  AAAServer:
+    label: AAA Server
+    short_label: AAA
+
+  LDAPServer:
+    base: [AAAServer]
+    label: LDAP Server
+    short_label: LDAP
+
+  RadiusServer:
+    base: [AAAServer]
+    label: RADIUS Server
+    short_label: RADIUS
+
+  RadAcctServer:
+    base: [RadiusServer]
+    label: RADIUS Accounting Server
+    short_label: RADIUS Acct
+
+  RadAuthServer:
+    base: [RadiusServer]
+    label: RADIUS Authentication Server
+    short_label: RADIUS Auth
+
+  # Not supported for WLAN auth on Cisco WLC, only management
+  # Stats not available on Cisco WLC
+  TacacsServer:
+    base: [AAAServer]
+    label: TACACS Server
+    short_label: TACACS
+
+  # Not supported on Cisco WLC
+  WindowsServer:
+    base: [AAAServer]
+    label: Windows Server
+    short_label: Windows
+
+  WLAN:
+    label: Wireless LAN
+    short_label: WLAN
+
+  GuestLAN:
+    base: [WLAN]
+    label: Guest LAN
+
+  # Not sure this exists on Aruba
+  RemoteLAN:
+    base: [WLAN]
+    label: Remote LAN
+
+
+zProperties:
+  DEFAULTS:
+    category: WLAN
+  zWlanApClientThreshold:
+    type: int
+    default: 64
+  zWlanApGroupIgnoreNames:
+    type: string
+  zWlanApIgnoreNames:
+    type: string
+  zWlanApIgnoreSubnets:
+    type: lines
+  zWlanApIgnoreModels:
+    type: lines
+  zWlanWlanIgnoreNames:
+    type: string
+  zWlanWlanIgnoreTypes:
+    type: lines
+  zWlanServerIgnoreNames:
+    type: string
+  zWlanServerIgnoreSubnets:
+    type: lines
+  zWlanServerIgnoreTypes:
+    type: lines
+  zWlanInterfaceIgnoreNames:
+    type: string
+  zWlanInterfaceIgnoreSubnets:
+    type: lines
+
+
+device_classes:
+  # To avoid conflict with /Network/Cisco/WLC from the Enterprise ZenPacks
+  /Network/Cisco/Controller:
+    remove: true
+    zProperties:
+      zCollectorPlugins:
+        - zenoss.snmp.DeviceMap
+        - zenoss.snmp.InterfaceMap
+        - zenoss.snmp.RouteMap
+        - zenoss.snmp.SnmpV3EngineIdMap
+        - daviswr.snmp.CiscoWlcDeviceMap
+        - daviswr.snmp.CiscoWlcApMap
+      zPythonClass: ZenPacks.daviswr.WirelessController.CiscoController
+
+  /Network/Aruba/Controller:
+    remove: true
+    zProperties:
+      zCollectorPlugins:
+        - zenoss.snmp.DeviceMap
+        - zenoss.snmp.InterfaceMap
+        - zenoss.snmp.RouteMap
+        - zenoss.snmp.SnmpV3EngineIdMap
+      zPythonClass: ZenPacks.daviswr.WirelessController.ArubaController
