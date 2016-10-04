@@ -19,6 +19,8 @@ class CiscoController(SnmpPlugin):
         '.1.3.6.1.4.1.14179.1.1.1.12.0': 'agentInventoryManufacturerName',
         '.1.3.6.1.4.1.14179.1.1.1.14.0': 'agentInventoryProductVersion',
         '.1.3.6.1.4.1.14179.1.1.5.2.0': 'agentTotalMemory',
+        '.1.3.6.1.4.1.14179.2.3.1.17.0': 'bsnRFMobilityDomainName',
+        '.1.3.6.1.4.1.14179.1.1.1.18.0': 'agentInventoryMaxNumberOfAPsSupported',
         })
 
     def process(self, device, results, log):
@@ -86,5 +88,23 @@ class CiscoController(SnmpPlugin):
                 memory
                 )
             maps.append(ObjectMap({'totalMemory': memory}, compname='hw'))
+
+        mobility = getdata.get('bsnRFMobilityDomainName', None)
+        if mobility:
+            log.debug(
+                '%s setting mobility domain to %s',
+                self.name(),
+                mobility
+                )
+            maps.append(ObjectMap({'mobilityDomains': [mobility,]}))
+
+        max_ap = getdata.get('agentInventoryMaxNumberOfAPsSupported', None)
+        if max_ap:
+            log.debug(
+                '%s setting platform max APs to %s',
+                self.name(),
+                max_ap
+                )
+            maps.append(ObjectMap({'platformMaxAPs': int(max_ap)}))
 
         return maps

@@ -24,50 +24,79 @@ class CiscoAP(SnmpPlugin):
         )
 
     bsnAPGroupsVlanEntry = {
-        '.1': 'bsnAPGroupsVlanName',
-        '.2': 'bsnAPGroupsVlanDescription',
-        '.20': 'bsnAPGroupsVlanRowStatus',
+        # bsnAPGroupsVlanName
+        '.1': 'title',
+        # bsnAPGroupsVlanDescription
+        '.2': 'description',
         }
 
     bsnAPEntry = {
-        '.1': 'bsnAPDot3MacAddress',
-        '.2': 'bsnAPNumOfSlots',
-        '.3': 'bsnAPName',
-        '.4': 'bsnAPLocation',
-        '.6': 'bsnAPOperationStatus',
-        '.8': 'bsnAPSoftwareVersion',
-        '.9': 'bsnAPBootVersion',
-        '.16': 'bsnAPModel',
-        '.17': 'bsnAPSerialNumber',
-        '.19': 'bsnApIpAddress',
-        '.26': 'bsnAPNetmask',
-        '.27': 'bsnAPGateway',
-        '.30': 'bsnAPGroupVlanName',
-        '.31': 'bsnAPIOSVersion',
-        '.33': 'bsnAPEthernetMacAddress',
-        '.37': 'bsnAPAdminStatus',
+        # bsnAPDot3MacAddress
+        '.1': 'radioMac',
+        # bsnAPNumOfSlots
+        '.2': 'radioCount',
+        # bsnAPName
+        '.3': 'title',
+        # bsnAPLocation
+        '.4': 'location',
+        # bsnAPOperationStatus
+        '.6': 'operStatus',
+        # bsnAPSoftwareVersion
+        '.8': 'swVersion',
+        # bsnAPBootVersion
+        '.9': 'bootVersion',
+        # bsnAPModel
+        '.16': 'model',
+        # bsnAPSerialNumber
+        '.17': 'serial',
+        # bsnApIpAddress
+        '.19': 'ip',
+        # bsnAPNetmask
+        '.26': 'netmask',
+        # bsnAPGateway
+        '.27': 'gateway',
+        # bsnAPGroupVlanName
+        '.30': 'group',
+        # bsnAPIOSVersion
+        '.31': 'iosVersion',
+        # bsnAPEthernetMacAddress
+        '.33': 'mac',
+        # bsnAPAdminStatus
+        '.37': 'adminStatus',
         }
 
     clcCdpApCacheEntry = {
-        '.2': 'clcCdpApCacheApName',
-        '.6': 'clcCdpApCacheNeighName',
-        '.7': 'clcCdpApCacheNeighAddressType',
-        '.8': 'clcCdpApCacheNeighAddress',
-        '.9': 'clcCdpApCacheNeighInterface',
-        '.12': 'clcCdpApCachePlatform',
+        # clcCdpApCacheNeighName
+        '.6': 'neighborName',
+        # clcCdpApCacheNeighAddressType
+        '.7': 'neighborIpType',
+        # clcCdpApCacheNeighAddress
+        '.8': 'neighborIp',
+        # clcCdpApCacheNeighInterface
+        '.9': 'neighborInterface',
+        # clcCdpApCachePlatform
+        '.12': 'neighborModel',
         }
 
     bsnAPIfEntry = {
-        '.1': 'bsnAPIfSlotId',
-        '.2': 'bsnAPIfType',
-        '.3': 'bsnAPIfPhyChannelAssignment',
-        '.4': 'bsnAPIfPhyChannelNumber',
-        '.7': 'bsnAPIfPhyAntennaMode',
-        '.8': 'bsnAPIfPhyAntennaType',
-        '.9': 'bsnAPIfPhyAntennaDiversity',
-        '.12': 'bsnAPIfOperStatus',
-        '.20': 'bsnAPIfAntennaGain',
-        '.34': 'bsnAPIfAdminStatus',
+        # bsnAPIfType
+        '.2': 'band',
+        # bsnAPIfPhyChannelAssignment
+        '.3': 'assignment',
+        # bsnAPIfPhyChannelNumber
+        '.4': 'channel',
+        # bsnAPIfPhyAntennaMode
+        '.7': 'mode',
+        # bsnAPIfPhyAntennaType
+        '.8': 'antenna',
+        # bsnAPIfPhyAntennaDiversity
+        '.9': 'diversity',
+        # bsnAPIfOperStatus
+        '.12': 'operStatus',
+        # bsnAPIfAntennaGain
+        '.20': 'gain',
+        # bsnAPIfAdminStatus
+        '.34': 'adminStatus',
         }
 
     snmpGetTableMaps = (
@@ -100,42 +129,25 @@ class CiscoAP(SnmpPlugin):
         maps = list()
         getdata, tabledata = results
 
-        # Check for empty tables
-        # There's probably a better way to do this
+        log.debug('SNMP Tables:\n%s', tabledata)
+
         bsnAPGroupsVlanTable = tabledata.get('bsnAPGroupsVlanTable')
-        if bsnAPGroupsVlanTable is None:
-            log.error('Unable to get bsnAPGroupsVlanTable from %s', device.id)
-            return None
-        else:
-            log.debug(
-                'bsnAPGroupsVlanTable has %s entries',
-                str(len(bsnAPGroupsVlanTable))
-                )
+        log.debug(
+            'bsnAPGroupsVlanTable has %s entries',
+            str(len(bsnAPGroupsVlanTable))
+            )
 
         bsnAPTable = tabledata.get('bsnAPTable')
-        if bsnAPTable is None:
-            log.error('Unable to get bsnAPTable from %s', device.id)
-            return None
-        else:
-            log.debug('bsnAPTable has %s entries', str(len(bsnAPTable)))
+        log.debug('bsnAPTable has %s entries', str(len(bsnAPTable)))
 
         clcCdpApCacheTable = tabledata.get('clcCdpApCacheTable')
-        if clcCdpApCacheTable is None:
-            # Not fatal
-            log.warning('Unable to get clcCdpApCacheTable from %s', device.id)
-        else:
-            log.debug(
-                'clcCdpApCacheTable has %s entries',
-                str(len(clcCdpApCacheTable))
-                )
+        log.debug(
+            'clcCdpApCacheTable has %s entries',
+            str(len(clcCdpApCacheTable))
+            )
 
         bsnAPIfTable = tabledata.get('bsnAPIfTable')
-        if bsnAPIfTable is None:
-            # Not fatal... ?
-            log.warning('Unable to get bsnAPIfTable from %s', device.id)
-        else:
-            log.debug('bsnAPIfTable has %s entries', str(len(bsnAPIfTable)))
-
+        log.debug('bsnAPIfTable has %s entries', str(len(bsnAPIfTable)))
 
         # Ignore criteria
         ignore_group_regex = getattr(device, 'zWlanApGroupIgnoreNames', '')
@@ -174,7 +186,7 @@ class CiscoAP(SnmpPlugin):
         ap_groups = dict()
         for snmpindex in bsnAPGroupsVlanTable:
             row = bsnAPGroupsVlanTable[snmpindex]
-            name = row.get('bsnAPGroupsVlanName', None)
+            name = row.get('title', None)
 
             if name is None:
                 continue
@@ -191,7 +203,6 @@ class CiscoAP(SnmpPlugin):
             row.update({
                 'snmpindex': snmpindex.strip('.'),
                 'id': self.prepId(name),
-                'title': name,
                 'access_points': dict(),
                 })
 
@@ -203,10 +214,10 @@ class CiscoAP(SnmpPlugin):
         for snmpindex in bsnAPTable:
             skip_net = False
             row = bsnAPTable[snmpindex]
-            name = row.get('bsnAPName', None)
-            model = row.get('bsnAPModel', '')
-            ip = row.get('bsnApIpAddress', '')
-            group = row.get('bsnAPGroupVlanName', 'default-group')
+            name = row.get('title', None)
+            model = row.get('model', '')
+            ip = row.get('ip', '')
+            group = row.get('group', 'default-group')
 
             if name is None:
                 continue
@@ -241,36 +252,35 @@ class CiscoAP(SnmpPlugin):
 
             # Clean up some values
             macs = [
-                'bsnAPDot3MacAddress',
-                'bsnAPEthernetMacAddress',
+                'radioMac',
+                'mac',
                 ]
             for attr in macs:
                 if attr in row:
                     row[attr] = self.asmac(row[attr])
 
-            if 'bsnAPModel' in row:
-                row['bsnAPModel'] = row['bsnAPModel'].strip(' ')
+            if model:
+                row['model'] = row['model'].strip(' ')
 
             # AP CDP neighbor
             cdpindex = '{}.1'.format(snmpindex)
             if clcCdpApCacheTable and cdpindex in clcCdpApCacheTable:
                 cdp_entry = clcCdpApCacheTable[cdpindex]
-                inet_type = cdp_entry.get('clcCdpApCacheNeighAddressType', '')
+                inet_type = cdp_entry.get('neighborIpType', '')
                 if inet_type and 1 == inet_type:
-                    cdp_entry['clcCdpApCacheNeighAddress'] = self.asip(cdp_entry['clcCdpApCacheNeighAddress'])
+                    cdp_entry['neighborIp'] = self.asip(cdp_entry['neighborIp'])
                 row.update(clcCdpApCacheTable[cdpindex])
 
             row.update({
                 'snmpindex': snmpindex.strip('.'),
                 'id': self.prepId(name),
-                'title': name,
                 })
 
             if group not in ap_groups:
                 log.info('AP %s in unknown group %s', name, group)
                 ap_groups[group] = {
                     'id': self.prepId(group),
-                    'title': name,
+                    'title': group,
                     }
 
             ap_groups[group]['access_points'][name] = row
@@ -287,30 +297,30 @@ class CiscoAP(SnmpPlugin):
             # but this should make human-readable values
             # available in zendmd, etc?
             attr_map = dict()
-            attr_map['bsnAPIfType'] = {
+            attr_map['band'] = {
                 1: '2.4 GHz',
                 2: '5 GHz',
                 }
 
-            attr_map['bsnAPIfPhyAntennaDiversity'] = {
+            attr_map['diversity'] = {
                 0: 'Connector A',
                 1: 'Connector B',
                 255: 'Enabled',
                 }
 
-            attr_map['bsnAPIfPhyAntennaMode'] = {
+            attr_map['mode'] = {
                 1: 'Sector A',
                 2: 'Sector B',
                 3: 'Omnidirectional',
                 99: 'Not Applicable',
                 }
 
-            attr_map['bsnAPIfPhyAntennaType'] = {
+            attr_map['antenna'] = {
                 1: 'Internal',
                 2: 'External',
                 }
 
-            attr_map['bsnAPIfPhyChannelAssignment'] = {
+            attr_map['assignment'] = {
                 1: 'Automatic',
                 2: 'Customized',
                 }
@@ -320,8 +330,8 @@ class CiscoAP(SnmpPlugin):
                     row[attr] = attr_map[attr].get(row[attr], row[attr])
 
             # Gain is reported in multiples of 0.5 dBm
-            if 'bsnAPIfAntennaGain' in row:
-                row['bsnAPIfAntennaGain'] = row['bsnAPIfAntennaGain']*0.5
+            if 'gain' in row:
+                row['gain'] = row['gain']*0.5
 
             log.debug(
                 '%s found radio %s for AP index %s',

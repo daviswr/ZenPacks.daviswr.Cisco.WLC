@@ -4,6 +4,7 @@ class_relationships:
   - Controller(aaaServers) 1:MC AAAServer(controller)
   - Controller(apGroups) 1:MC APGroup(controller)
   - Controller(dhcpPools) 1:MC DHCPPool(controller)
+  - Controller(license) 1:MC License(controller)
   - Controller(vlanInterfaces) 1:MC vlanInterface(controller)
   - Controller(wlans) 1:MC WLAN(controller)
   - APGroup(accessPoints) 1:MC AccessPoint(apGroup)
@@ -22,41 +23,49 @@ classes:
     label: Wireless Controller
     short_label: Controller
     properties:
+      apCount:
+        type: int
+      # Set by license modeler
+      maxAPs:
+        type: int
+      # Cisco - bsnRFMobilityDomainName
       mobilityDomains:
         type: lines
+      # Cisco - agentInventoryMaxNumberOfAPsSupported 
+      platformMaxAPs:
+        type: int
+      # Aruba - wlsxSwitchRole
+      # Cisco - Check licenses to determine if HA SKU?
+      role:
+        type: string
 
   ArubaController:
     base: [Controller]
     label: Aruba Mobility Controller
     short_label: Aruba Controller
     properties:
-      local:
+      isLocal:
         type: boolean
-      master:
+      isMaster:
         type: boolean
-      # wlsxSwitchRole
-      role:
-        type: string
       # wlsxSwitchMasterIp
       masterIP:
         type: string
 
+  ArubaInstantController:
+    base: [ArubaController]
+    label: Aruba Instant Virtual Controller
+    short_label: Aruba Instant
+    
   CiscoController:
     base: [Controller]
     label: Cisco Wireless LAN Controller
-    short_label: WLC
-    properties:
-      # agentInventoryMaxNumberOfAPsSupported
-      maxAPs:
-        type: int
-      # How to tell if HA SKU?
-      #role:
-      #  type: string
+    short_label: Cisco WLC
 
   CiscoIOSController:
-    base: [Controller]
+    base: [CiscoController]
     label: Cisco IOS Wireless Controller
-    short_label: IOS WLC
+    short_label: Cisco IOS WLC
       
   AccessPoint:
     label: Access Point
@@ -142,6 +151,8 @@ classes:
 
   ArubaAP:
     base: [AccessPoint]
+    label: Access Point
+    short_label: AP
     properties:
       DEFAULTS:
         type: string
@@ -160,14 +171,14 @@ classes:
         enum: {true: "clear", false: "critical"}
         renderer: Zenoss.render.severity
         label_width: 25
-        content_wdith: 25
+        content_width: 25
         details_display: false
       # lldpNeighborChassisId
       neighborMac:
         label: Neighbor MAC Address
         short_label: Neighbor MAC
       # wlanAPStatus
-      status:
+      operStatus:
         label: Status
         type: int
         #enum: {1: "Up", 2: "Down"}
@@ -180,8 +191,15 @@ classes:
         content_width: 25
         details_display: false
 
+  ArubaInstantAP:
+    base: [ArubaAP]
+    label: Access Point
+    short_label: AP
+
   CiscoAP:
     base: [AccessPoint]
+    label: Access Point
+    short_label: AP
     properties:
       DEFAULTS:
         type: string
@@ -209,7 +227,7 @@ classes:
         label: IOS Version
         short_label: IOS
       # bsnAPEthernetMacAddress
-      macAddress:
+      mac:
         label: MAC Address
         short_label: MAC
       # clcCdpApCachePlatform
@@ -217,11 +235,11 @@ classes:
         label: Neighbor Model
         order: 15
       # bsnAPDot3MacAddress
-      radioMacAddress:
+      radioMac:
         label: Base Radio MAC Address
         short_label: Radio MAC
       # bsnAPOperationStatus
-      status:
+      operStatus:
         label: Status
         type: int
         #enum: {1: "Associated", 2: "Disassocating", 3: "Downloading"}
@@ -301,6 +319,8 @@ classes:
 
   ArubaAPRadio:
     base: [APRadio]
+    label: Access Point Radio
+    short_label: Radio
     properties:
       DEFAULTS:
         type: string
@@ -335,13 +355,15 @@ classes:
 
   CiscoAPRadio:
     base: [APRadio]
+    label: Access Point Radio
+    short_label: Radio
     properties:
       DEFAULTS:
         type: string
         grid_display: false
         details_display: true
-       # bsnAPIfPhyAntennaMode
-       mode:
+      # bsnAPIfPhyAntennaMode
+      mode:
         label: Antenna Mode
         order: 6
       # bsnAPIfPhyChannelAssignment
@@ -355,7 +377,7 @@ classes:
         short_label: Diversity
         order: 7
       # bsnAPIfOperStatus
-      status:
+      operStatus:
         label: Operational Status
         short_label: Status
         type: int
@@ -380,7 +402,7 @@ classes:
         label_width: 35
         content_width: 35
       # bsnAPIfAdminStatus
-      admin:
+      adminStatus:
         label: Administrative Status
         short_label: Admin
         type: int
@@ -410,6 +432,9 @@ classes:
 
   DHCPPool:
     label: DHCP Pool
+
+  License:
+    label: License
 
   # "Interfaces" on Cisco WLC (physical interfaces are "ports")
   # "VLANs" on Aruba
@@ -508,8 +533,8 @@ device_classes:
         - zenoss.snmp.InterfaceMap
         - zenoss.snmp.RouteMap
         - zenoss.snmp.SnmpV3EngineIdMap
-        - daviswr.snmp.CiscoWlcDeviceMap
-        - daviswr.snmp.CiscoWlcApMap
+        - daviswr.snmp.CiscoController
+        - daviswr.snmp.CiscoAP
       zPythonClass: ZenPacks.daviswr.WirelessController.CiscoController
 
   /Network/Aruba/Controller:
