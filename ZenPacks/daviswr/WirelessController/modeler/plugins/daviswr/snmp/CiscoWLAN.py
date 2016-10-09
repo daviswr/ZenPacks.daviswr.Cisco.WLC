@@ -78,6 +78,25 @@ class CiscoWLAN(SnmpPlugin):
         '.1': 'ckip',
         }
 
+    # More or less modeling the controller's LDAP servers, too
+    cldlServerEntry = {
+        # cldlServerAddressType
+        '.2': 'ip_type',
+        # cldlServerAddress
+        '.3': 'ip',
+        # cldlServerPortNum
+        '.4': 'port',
+        }
+
+    cldlWlanLdapEntry = {
+        # cldlWlanLdapPrimaryServerIndex
+        '.1': 'ldap1',
+        # cldlWlanLdapSecondaryServerIndex
+        '.2': 'ldap2',
+        # cldlWlanLdapTertiaryServerIndex
+        '.3': 'ldap3',
+        }
+
     snmpGetTableMaps = (
         GetTableMap(
             'bsnDot11EssTable',
@@ -98,7 +117,17 @@ class CiscoWLAN(SnmpPlugin):
             'cLWSecDot11EssCkipTable',
             '.1.3.6.1.4.1.9.9.521.1.1.2.1',
             cLWSecDot11EssCkipEntry
-            )
+            ),
+        GetTableMap(
+            'cldlServerTable',
+            '.1.3.6.1.4.1.9.9.614.1.1.1.1',
+            cldlServerEntry
+            ),
+        GetTableMap(
+            'cldlWlanLdapTable',
+            '.1.3.6.1.4.1.9.9.614.1.1.2.1',
+            cldlWlanLdapEntry
+            ),
         )
 
     def process(self, device, results, log):
@@ -155,6 +184,26 @@ class CiscoWLAN(SnmpPlugin):
                 str(len(cLWSecDot11EssCkipTable))
                 )
 
+        cldlServerTable = tabledata.get('cldlServerTable', dict())
+        if not cldlServerTable:
+            # Not fatal
+            log.warn('Unable to get cldlServerTable from %s', device.id)
+        else:
+            log.debug(
+                'cldlServerTable has %s entries',
+                str(len(cldlServerTable))
+                )
+
+        cldlWlanLdapTable = tabledata.get('cldlWlanLdapTable', dict())
+        if not cldlWlanLdapTable:
+            # Not fatal
+            log.warn('Unable to get cldlWlanLdapTable from %s', device.id)
+        else:
+            log.debug(
+                'cldlWlanLdapTable has %s entries',
+                str(len(cldlWlanLdapTable))
+                )
+
         # Ignore criteria
         ignore_names_regex = getattr(device, 'zWlanWlanIgnoreNames', '')
         if ignore_names_regex:
@@ -185,6 +234,7 @@ class CiscoWLAN(SnmpPlugin):
             row.update(cLWlanConfigTable.get(snmpindex, dict()))
             row.update(cLWSecDot11EssCckmTable.get(snmpindex, dict()))
             row.update(cLWSecDot11EssCkipTable.get(snmpindex, dict()))
+            row.update(cldlWlanLdapTable.get(snmpindex, dict()))
 
             # Clean up attributes
             booleans = [
@@ -287,22 +337,37 @@ class CiscoWLAN(SnmpPlugin):
                         if 'auth' == rad:
                             auth.append(server)
 
+            # LDAP servers
+            ldap = list()
+            ldap_entry = ''
+            for num in range(1, 4):
+                attr = 'ldap{}'.format(num)
+                if str(row.get(attr, 0)) in cldlServerTable:
+                    server = cldlServerTable[str(row[attr])]
+                    if 'ip' in server:
+                        if server.get('ip_type', 0) == 1:
+                            ldap_entry = self.asip(server['ip'])
+                        else:
+                            ldap_entry = str(server['ip'])
+                        if 'port' in server:
+                            ldap_entry += ':{}'.format(server['port'])
+                        ldap.append(ldap_entry)
+
+            # Update dictionary and create Object Map
             row.update({
                 'snmpindex': snmpindex.strip('.'),
                 'id': self.prepId(row.get('profile', name)),
+                'ldap': ldap,
                 'radAcct': acct,
                 'radAuth': auth,
                 'security': security,
                 })
 
-            subtype = row.get('subtype', 'CiscoWLAN')
+            class_name = 'ZenPacks.daviswr.WirelessController.{}'.format(
+                row.get('subtype', 'CiscoWLAN')
+                )
 
-            rm.append(ObjectMap(
-                modname='ZenPacks.daviswr.WirelessController.{}'.format(
-                    subtype
-                    ),
-                data=row
-                ))
+            rm.append(ObjectMap(modname=class_name, data=row))
 
         maps.append(rm)
         log.debug('%s RelMaps:\n', maps)

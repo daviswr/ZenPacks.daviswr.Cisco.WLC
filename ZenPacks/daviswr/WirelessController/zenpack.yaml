@@ -399,11 +399,36 @@ classes:
   AAAServer:
     label: AAA Server
     short_label: AAA
+    properties:
+      DEFAULTS:
+        grid_display: true
+        details_display: true
+      enabled:
+        label: Enabled
+        type: bool
+        enum: {true: "clear", false: "debug"}
+        renderer: Zenoss.render.severity
+        details_display: false
+        label_width: 35
+        content_width: 35
+      ip:
+        label: IP Address
+        short_label: IP
+        type: string
+      port:
+        label: Port
+        type: int
 
   LDAPServer:
     base: [AAAServer]
     label: LDAP Server
     short_label: LDAP
+    # enabled
+    # Cisco - cldlServerState
+    # ip
+    # Cisco - cldlServerAddress
+    # port
+    # Cisco - cldlServerPortNum
 
   RadiusServer:
     base: [AAAServer]
@@ -452,9 +477,9 @@ classes:
         short_label: Security
         grid_display: true
         order: 5
-        # To fit "WPA-TKIP/WPA2-AES+TKIP 802.1x+CCKM + MAC Filter" at max
-        label_width: 275
-        content_width: 275
+        # To fit "WPA-TKIP/WPA2-AES+TKIP PSK + WebAuth + MAC Filter" at max
+        label_width: 285
+        content_width: 285
       # Aruba - indexes of WlanESSIDEntry
       # Cisco - cLWlanSsid, bsnDot11EssSsid
       ssid:
@@ -526,6 +551,12 @@ classes:
         type: string
         grid_display: false
         order: 2
+      # cldlWlanLdap(Primary|Secondary|Teriary)ServerIndex
+      ldap:
+        label: LDAP Servers
+        type: lines
+        grid_display: false
+        order: 12
       # bsnDot11EssRadiusAuth(Primary|Secondary|Tertiary)Server
       radAuth:
         label: RADIUS Authentication Servers
