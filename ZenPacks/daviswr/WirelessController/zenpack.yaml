@@ -12,6 +12,8 @@ class_relationships:
   # Aruba-specific
   - ArubaController(arubaRemoteController) 1:MC ArubaRemoteController(controller)
   # Use stock component classes for CPU, fan, and power
+  # Non-containing relationships
+  #- WLAN(aaaServers) M:M AAAServer(wlans)
 
 
 classes:
@@ -173,23 +175,6 @@ classes:
         label_width: 25
         content_width: 25
         details_display: false
-      # lldpNeighborChassisId
-      neighborMac:
-        label: Neighbor MAC Address
-        short_label: Neighbor MAC
-      # wlanAPStatus
-      operStatus:
-        label: Status
-        type: int
-        #enum: {1: "Up", 2: "Down"}
-        enum: {1: "clear", 2: "critical"}
-        renderer: Zenoss.render.severity
-        #datapoint: wlanAPStatus_wlanAPStatus
-        grid_display: true
-        order: 17
-        label_width: 25
-        content_width: 25
-        details_display: false
 
   ArubaInstantAP:
     base: [ArubaAP]
@@ -205,23 +190,21 @@ classes:
         type: string
         grid_display: false
         details_display: true
-      # bsnAPAdminStatus
-      adminStatus:
-        label: Administrative Status
-        short_label: Admin
-        type: int
-        #enum: {1: "Enabled", 2: "Disabled"}
-        enum: {1: "clear", 2: "critical"}
-        renderer: Zenoss.render.severity
-        #datapoint: bsnAPAdminStatus_bsnAPAdminStatus
-        grid_display: true
-        label_width: 25
-        content_width: 25
-        details_display: false
       # bsnAPBootVersion
       bootVersion:
         label: Boot Version
         short_label: Boot
+      # bsnAPAdminStatus
+      enabled:
+        label: Enabled
+        type: boolean
+        #enum: {1: "Enabled", 2: "Disabled"}
+        enum: {true: "clear", false: "debug"}
+        renderer: Zenoss.render.severity
+        grid_display: true
+        label_width: 35
+        content_width: 35
+        details_display: false
       # bsnAPIOSVersion
       iosVersion:
         label: IOS Version
@@ -238,19 +221,6 @@ classes:
       radioMac:
         label: Base Radio MAC Address
         short_label: Radio MAC
-      # bsnAPOperationStatus
-      operStatus:
-        label: Status
-        type: int
-        #enum: {1: "Associated", 2: "Disassocating", 3: "Downloading"}
-        enum: {1: "clear", 2: "critical", 3: "warning"}
-        renderer: Zenoss.render.severity
-        #datapoint: bsnAPOperationStatus_bsnAPOperationStatus
-        grid_display: true
-        order: 17
-        label_width: 25
-        content_width: 25
-        details_display: false
 
   APGroup:
     label: Access Point Group
@@ -328,7 +298,7 @@ classes:
         details_display: true
       # wlanAPRadioNumAssociatedClients
       clients:
-        label: Associations
+        label: Clients
         short_label: Clients
         type: int
         grid_display: true
@@ -376,23 +346,21 @@ classes:
         label: Antenna Diversity
         short_label: Diversity
         order: 7
-      # bsnAPIfOperStatus
-      operStatus:
-        label: Operational Status
-        short_label: Status
-        type: int
-        #enum: {1: "Down", 2: "Up"}
-        enum: {1: "critical", 2: "clear"}
+      # bsnAPIfAdminStatus
+      enabled:
+        label: Enabled
+        type: boolean
+        #enum: {1: "Enabled", 2: "Disabled"}
+        enum: {true: "clear", false: "debug"}
         renderer: Zenoss.render.severity
-        #datapoint: bsnAPIfOperStatus_bsnAPIfOperStatus
         grid_display: true
-        order: 8
-        label_width: 25
-        content_width: 25
+        order: 9
+        label_width: 35
+        content_width: 35
         details_display: false
       # bsnApIfNoOfUsers
       clients:
-        label: Associations
+        label: Clients
         short_label: Clients
         type: int
         grid_display: true
@@ -401,20 +369,6 @@ classes:
         order: 20
         label_width: 35
         content_width: 35
-      # bsnAPIfAdminStatus
-      adminStatus:
-        label: Administrative Status
-        short_label: Admin
-        type: int
-        #enum: {1: "Enabled", 2: "Disabled"}
-        enum: {1: "clear", 2: "critical"}
-        renderer: Zenoss.render.severity
-        #datapoint: bsnAPIfAdminStatus_bsnAPIfAdminStatus
-        grid_display: true
-        order: 9
-        label_width: 25
-        content_width: 25
-        details_display: false
 
   ArubaRemoteController:
     label: Aruba Controller
@@ -482,14 +436,117 @@ classes:
   WLAN:
     label: Wireless LAN
     short_label: WLAN
+    properties:
+      DEFAULTS:
+        type: string
+        grid_display: false
+        details_display: true
+      # Aruba - wlanESSIDEncryptionType
+      # Cisco - cLWSecDot11EssCckmTable
+      #         + cLWSecDot11EssCkipEntry
+      #         + bsnDot11EssWebSecurity
+      #         + bsnDot11EssStaticWEPSecurity
+      #         + bsnDot11Ess8021xSecurity
+      security:
+        label: Security
+        short_label: Security
+        grid_display: true
+        order: 5
+        # To fit "WPA-TKIP/WPA2-AES+TKIP 802.1x+CCKM + MAC Filter" at max
+        label_width: 275
+        content_width: 275
+      # Aruba - indexes of WlanESSIDEntry
+      # Cisco - cLWlanSsid, bsnDot11EssSsid
+      ssid:
+        label: SSID
+        order: 1
 
-  GuestLAN:
+  ArubaWLAN:
     base: [WLAN]
+    label: Wireless LAN
+    short_label: WLAN
+    properties:
+      DEFAULTS:
+        type: int
+        grid_display: true
+        details_display: true
+      # wlanESSIDNumAccessPointsUp
+      accessPoints:
+        label: Access Points
+        short_label: APs
+        datapoint: wlanESSIDNumAccessPointsUp_wlanESSIDNumAccessPointsUp
+        label_width: 35
+        content_width: 35
+      # wlanESSIDNumStations
+      clients:
+        label: Clients
+        datapoint: wlanESSIDNumStations_wlanESSIDNumStations
+        label_width: 35
+        content_width: 35
+
+  CiscoWLAN:
+    base: [WLAN]
+    label: Wireless LAN
+    short_label: WLAN
+    properties:
+      DEFAULTS:
+        grid_display: true
+        details_display: true
+      # bsnDot11EssBroadcastSsid
+      broadcast:
+        label: Broadcast
+        type: boolean
+        enum: {true: "clear", false: "debug"}
+        renderer: Zenoss.render.severity
+        details_display: false
+        order: 6
+        label_width: 45
+        content_width: 45
+      # bsnDot11EssNumberOfMobileStations
+      clients:
+        label: Clients
+        type: int
+        datapoint: bsnDot11EssNumberOfMobileStations_bsnDot11EssNumberOfMobileStations
+        order: 8
+        label_width: 35
+        content_width: 35
+      # bsnDot11EssAdminStatus
+      enabled:
+        label: Enabled
+        type: boolean
+        enum: {true: "clear", false: "debug"}
+        renderer: Zenoss.render.severity
+        details_display: false
+        order: 7
+        label_width: 35
+        content_width: 35
+      # cLWlanProfileName
+      profile:
+        label: Profile
+        type: string
+        grid_display: false
+        order: 2
+      # bsnDot11EssRadiusAuth(Primary|Secondary|Tertiary)Server
+      radAuth:
+        label: RADIUS Authentication Servers
+        type: lines
+        grid_display: false
+        order: 10
+      # bsnDot11EssRadiusAcct(Primary|Secondary|Tertiary)Server
+      radAcct:
+        label: RADIUS Accounting Servers
+        type: lines
+        grid_display: false
+        order: 11
+ 
+  # cLWlanLanSubType, cLWlanIsWired
+  CiscoGuestLAN:
+    base: [CiscoWLAN]
     label: Guest LAN
 
-  # Not sure this exists on Aruba
-  RemoteLAN:
-    base: [WLAN]
+  # cLWlanLanSubType
+  CiscoRemoteLAN:
+    base: [CiscoWLAN]
     label: Remote LAN
 
 
@@ -509,8 +566,6 @@ zProperties:
     type: lines
   zWlanWlanIgnoreNames:
     type: string
-  zWlanWlanIgnoreTypes:
-    type: lines
   zWlanServerIgnoreNames:
     type: string
   zWlanServerIgnoreSubnets:
@@ -535,6 +590,7 @@ device_classes:
         - zenoss.snmp.SnmpV3EngineIdMap
         - daviswr.snmp.CiscoController
         - daviswr.snmp.CiscoAP
+        - daviswr.snmp.CiscoWLAN
       zPythonClass: ZenPacks.daviswr.WirelessController.CiscoController
 
   /Network/Aruba/Controller:

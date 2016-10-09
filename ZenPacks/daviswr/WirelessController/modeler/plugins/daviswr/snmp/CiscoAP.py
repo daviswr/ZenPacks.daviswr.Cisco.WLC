@@ -39,8 +39,6 @@ class CiscoAP(SnmpPlugin):
         '.3': 'title',
         # bsnAPLocation
         '.4': 'location',
-        # bsnAPOperationStatus
-        '.6': 'operStatus',
         # bsnAPSoftwareVersion
         '.8': 'swVersion',
         # bsnAPBootVersion
@@ -62,7 +60,7 @@ class CiscoAP(SnmpPlugin):
         # bsnAPEthernetMacAddress
         '.33': 'mac',
         # bsnAPAdminStatus
-        '.37': 'adminStatus',
+        '.37': 'enabled',
         }
 
     clcCdpApCacheEntry = {
@@ -91,12 +89,10 @@ class CiscoAP(SnmpPlugin):
         '.8': 'antenna',
         # bsnAPIfPhyAntennaDiversity
         '.9': 'diversity',
-        # bsnAPIfOperStatus
-        '.12': 'operStatus',
         # bsnAPIfAntennaGain
         '.20': 'gain',
         # bsnAPIfAdminStatus
-        '.34': 'adminStatus',
+        '.34': 'enabled',
         }
 
     snmpGetTableMaps = (
