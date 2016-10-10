@@ -373,6 +373,11 @@ classes:
   ArubaRemoteController:
     label: Aruba Controller
     short_label: Controller
+    properties:
+      ip:
+        label: IP Address
+        short_label: IP
+        type: string
 
   ArubaLocalController:
     base: [ArubaRemoteController]
@@ -386,6 +391,57 @@ classes:
 
   DHCPPool:
     label: DHCP Pool
+    properties:
+      DEFAULTS:
+        type: string
+        grid_display: false
+        details_display: true
+      # Cisco - agentDhcpScopeDnsServerAddress(1|2|3)
+      dns:
+        label: DNS Servers
+        short_label: DNS
+        type: lines
+        order: 6
+      # Cisco - agentDhcpScopeDnsDomainName
+      domain:
+        label: DNS Domain
+        short_label: Domain
+        order: 7
+      # Cisco - agentDhcpScopeState
+      enabled:
+        label: Enabled
+        type: bool
+        enum: {true: "clear", false: "debug"}
+        renderer: Zenoss.render.severity
+        grid_display: true
+        details_display: false
+        order: 10
+      # Cisco - agentDhcpScopePoolEndAddress
+      end:
+        label: Ending IP Address
+        short_label: End IP
+        grid_display: true
+        order: 2
+      # Cisco - agentDhcpScopeNetmask
+      netmask:
+        label: Netmask
+        order: 4
+      # Cisco - agentDhcpScopeNetwork
+      network:
+        label: Network
+        order: 3
+      # Cisco - agentDhcpScopeDefaultRouterAddress(1|2|3)
+      routers:
+        label: Default Gateways
+        short_label: Gateways
+        type: lines
+        order: 5
+      # Cisco - agentDhcpScopePoolStartAddress
+      start:
+        label: Starting IP Address
+        short_label: Start IP
+        grid_display: true
+        order: 1
 
   License:
     label: License
@@ -395,6 +451,34 @@ classes:
   VlanInterface:
     label: VLAN Interface
     short_label: VLAN
+    properties:
+      DEFAULTS:
+        type: string
+        grid_display: true
+        details_display: true
+      # Aruba - ifExtVlanInterfaceIpAddress
+      # Cisco - agentInterfaceIPAddress
+      ip:
+        label: IP Address
+        short_label: IP
+        order: 2
+      # Aruba does not appear to report the MAC
+      # Cisco - agentInterfaceMacAddress
+      mac:
+        label: MAC Address
+        short_label: MAC
+        order: 4
+      # Aruba - ifExtVlanInterfaceIpMask
+      # Cisco - agentInterfaceIPNetmask
+      netmask:
+        label: Netmask
+        order: 3
+      # Aruba - wlsxIfExtVlanEntry indexes
+      # Cisco - agentInterfaceVlanId
+      vlan:
+        label: VLAN
+        type: int
+        order: 1
 
   AAAServer:
     label: AAA Server
@@ -419,6 +503,19 @@ classes:
         label: Port
         type: int
 
+  # Unsure if Cisco reports on this
+  InternalDB:
+    base: [AAAServer]
+    label: Internal User Database
+    short_label: Internal DB
+    properties:
+      ip:
+        grid_display: false
+        details_display: false
+      port:
+        grid_display: false
+        details_display: false
+
   LDAPServer:
     base: [AAAServer]
     label: LDAP Server
@@ -439,20 +536,57 @@ classes:
     base: [RadiusServer]
     label: RADIUS Accounting Server
     short_label: RADIUS Acct
+    # enabled
+    # Cisco - bsnRadiusAccServerStatus
+    # ip
+    # Cisco - bsnRadiusAccServerAddress
+    # port
+    # Cisco - bsnRadiusAccClientServerPortNumber
 
   RadAuthServer:
     base: [RadiusServer]
     label: RADIUS Authentication Server
     short_label: RADIUS Auth
+    # enabled
+    # Cisco - bsnRadiusAuthServerStatus
+    # ip
+    # Cisco - bsnRadiusAuthServerAddress
+    # port
+    # Cisco - bsnRadiusAuthClientServerPortNumber
 
-  # Not supported for WLAN auth on Cisco WLC, only management
-  # Stats not available on Cisco WLC
+  # Not supported for WLAN auth on Cisco, only management
+  # Stats not available on Cisco
   TacacsServer:
     base: [AAAServer]
     label: TACACS Server
     short_label: TACACS
+    # enabled
+    # Cisco - claTacacsServerEnabled.(type)
+    #         1 - authn
+    #         2 - authz
+    #         3 - acct
+    # ip
+    # Cisco - claTacacsServerAddress.(type)
+    # port
+    # Cisco - claTacacsServerPortNum.(type)
 
-  # Not supported on Cisco WLC
+  TacAcctServer:
+    base: [TacacsServer]
+    label: TACACS Accounting Server
+    short_label: TACACS Acct
+
+  TacAuthnServer:
+    base: [TacacsServer]
+    label: TACACS Authentication Server
+    short_label: TACACS Authn
+
+  # Unknown if supported on Aruba
+  TacAuthzServer:
+    base: [TacacsServer]
+    label: TACACS Authorization Server
+    short_label: TACACS Authz
+
+  # Not supported on Cisco
   WindowsServer:
     base: [AAAServer]
     label: Windows Server
@@ -515,7 +649,7 @@ classes:
     short_label: WLAN
     properties:
       DEFAULTS:
-        grid_display: true
+        grid_display: false
         details_display: true
       # bsnDot11EssBroadcastSsid
       broadcast:
@@ -523,6 +657,7 @@ classes:
         type: boolean
         enum: {true: "clear", false: "debug"}
         renderer: Zenoss.render.severity
+        grid_display: true
         details_display: false
         order: 6
         label_width: 45
@@ -532,43 +667,50 @@ classes:
         label: Clients
         type: int
         datapoint: bsnDot11EssNumberOfMobileStations_bsnDot11EssNumberOfMobileStations
+        grid_display: true
         order: 8
         label_width: 35
         content_width: 35
+      # bsnDot11EssDhcpServerIpAddress
+      dhcp:
+        label: DHCP Server
+        short_label: DHCP
+        type: string
+        order: 13
       # bsnDot11EssAdminStatus
       enabled:
         label: Enabled
         type: boolean
         enum: {true: "clear", false: "debug"}
         renderer: Zenoss.render.severity
+        grid_display: true
         details_display: false
         order: 7
         label_width: 35
         content_width: 35
+      # cldlWlanLdap(Primary|Secondary|Teriary)ServerIndex
+      ldap:
+        label: LDAP Servers
+        short_label: LDAP
+        type: lines
+        order: 12
       # cLWlanProfileName
       profile:
         label: Profile
         type: string
-        grid_display: false
         order: 2
-      # cldlWlanLdap(Primary|Secondary|Teriary)ServerIndex
-      ldap:
-        label: LDAP Servers
-        type: lines
-        grid_display: false
-        order: 12
-      # bsnDot11EssRadiusAuth(Primary|Secondary|Tertiary)Server
-      radAuth:
-        label: RADIUS Authentication Servers
-        type: lines
-        grid_display: false
-        order: 10
       # bsnDot11EssRadiusAcct(Primary|Secondary|Tertiary)Server
       radAcct:
         label: RADIUS Accounting Servers
+        short_label: RADIUS Acct
         type: lines
-        grid_display: false
         order: 11
+      # bsnDot11EssRadiusAuth(Primary|Secondary|Tertiary)Server
+      radAuth:
+        label: RADIUS Authentication Servers
+        short_label: RADIUS Auth
+        type: lines
+        order: 10
  
   # cLWlanLanSubType, cLWlanIsWired
   CiscoGuestLAN:

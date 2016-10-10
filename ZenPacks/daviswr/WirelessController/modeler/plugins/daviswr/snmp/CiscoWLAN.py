@@ -31,6 +31,8 @@ class CiscoWLAN(SnmpPlugin):
         '.13': 'wep_dot1x',
         # bsnDot11EssWebSecurity
         '.29': 'webauth',
+        # bsnDot11EssDhcpServerIpAddress
+        '.33': 'dhcp',
         # bsnDot11EssNumberOfMobileStations
         '.38': 'clients',
         # bsnDot11EssBroadcastSsid
@@ -287,6 +289,9 @@ class CiscoWLAN(SnmpPlugin):
                         # Hex dict keys get stored as integers
                         value = int(ord(value))
                     row[attr] = attr_map[attr].get(value)
+
+            if row.get('dhcp') == '0.0.0.0':
+                del row['dhcp']
 
             # Security type
             security = 'Open'
