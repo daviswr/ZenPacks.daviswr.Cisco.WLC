@@ -188,8 +188,7 @@ class CiscoAP(SnmpPlugin):
                 continue
             elif ignore_group_regex and re.search(ignore_group_regex, name):
                 log.debug(
-                    '%s skipping AP Group %s due to zWlanApGroupIgnoreNames',
-                    self.name(),
+                    'Skipping AP Group %s due to zWlanApGroupIgnoreNames',
                     name
                     )
                 continue
@@ -219,15 +218,13 @@ class CiscoAP(SnmpPlugin):
                 continue
             elif ignore_ap_regex and re.search(ignore_ap_regex, name):
                 log.debug(
-                    '%s skipping AP %s due to zWlanApIgnoreNames',
-                    self.name(),
+                    'Skipping AP %s due to zWlanApIgnoreNames',
                     name
                     )
                 continue
             elif model in ignore_model_list:
                 log.debug(
-                    '%s skipping AP %s due to zWlanApIgnoreModels',
-                    self.name(),
+                    'Skipping AP %s due to zWlanApIgnoreModels',
                     name
                     )
                 continue
@@ -238,8 +235,7 @@ class CiscoAP(SnmpPlugin):
                     break
             if skip_net:
                 log.debug(
-                    '%s skipping AP due to zWlanApIgnoreSubnets',
-                    self.name(),
+                    'Skipping AP due to zWlanApIgnoreSubnets',
                     name
                     )
                 continue

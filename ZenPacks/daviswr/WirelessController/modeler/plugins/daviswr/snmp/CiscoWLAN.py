@@ -339,7 +339,7 @@ class CiscoWLAN(SnmpPlugin):
                         server = row[attr].replace(' ', ':')
                         if 'acct' == rad:
                             acct.append(server)
-                        if 'auth' == rad:
+                        elif 'auth' == rad:
                             auth.append(server)
 
             # LDAP servers
