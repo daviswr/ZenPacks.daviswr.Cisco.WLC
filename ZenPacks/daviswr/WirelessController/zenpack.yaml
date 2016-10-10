@@ -387,6 +387,8 @@ classes:
         short_label: IP
         type: string
         grid_display: true
+        label_width: 80
+        content_width: 80
       # sysExtSwitchLocation
       location:
         label: Location
@@ -449,12 +451,16 @@ classes:
         grid_display: true
         details_display: false
         order: 10
+        label_width: 35
+        content_width: 35
       # Cisco - agentDhcpScopePoolEndAddress
       end:
         label: Ending IP Address
         short_label: End IP
         grid_display: true
         order: 2
+        label_width: 80
+        content_width: 80
       # Cisco - agentDhcpScopeNetmask
       netmask:
         label: Netmask
@@ -475,6 +481,8 @@ classes:
         short_label: Start IP
         grid_display: true
         order: 1
+        label_width: 80
+        content_width: 80
 
   License:
     label: License
@@ -543,6 +551,8 @@ classes:
         label: IP Address
         short_label: IP
         order: 2
+        label_width: 80
+        content_width: 80
       # Aruba does not appear to report the MAC
       # Cisco - agentInterfaceMacAddress
       mac:
@@ -554,6 +564,8 @@ classes:
       netmask:
         label: Netmask
         order: 3
+        label_width: 80
+        content_width: 80
       # Aruba - wlsxIfExtVlanEntry indexes
       # Cisco - agentInterfaceVlanId
       vlan:
@@ -582,6 +594,8 @@ classes:
         label: IP Address
         short_label: IP
         type: string
+        label_width: 80
+        content_width: 80
       # Aruba - authServerPort
       port:
         label: Port
@@ -827,7 +841,7 @@ zProperties:
   zWlanInterfaceIgnoreSubnets:
     type: lines
   zWlanInterfaceIgnoreVlans:
-    tpye: lines
+    type: lines
   zWlanServerIgnoreNames:
     type: string
   zWlanServerIgnoreSubnets:
@@ -853,6 +867,7 @@ device_classes:
   /Network/Cisco/Controller:
     remove: true
     zProperties:
+      # Modeler plugin names should probably have controller type in them
       zCollectorPlugins:
         - zenoss.snmp.DeviceMap
         - zenoss.snmp.InterfaceMap
@@ -861,4 +876,5 @@ device_classes:
         - daviswr.snmp.CiscoController
         - daviswr.snmp.CiscoAP
         - daviswr.snmp.CiscoWLAN
+        - daviswr.snmp.CiscoDHCP
       zPythonClass: ZenPacks.daviswr.WirelessController.CiscoController
