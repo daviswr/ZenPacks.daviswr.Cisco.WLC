@@ -27,6 +27,10 @@ classes:
     properties:
       apCount:
         type: int
+      # Aruba - wlsxSysExtHwVersion.0
+      # Cisco - entPhysicalHardwareRev.1
+      hwVersion:
+        type: string
       # Set by license modeler
       maxAPs:
         type: int

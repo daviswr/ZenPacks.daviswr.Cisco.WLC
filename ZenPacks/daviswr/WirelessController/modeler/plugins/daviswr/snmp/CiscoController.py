@@ -21,6 +21,7 @@ class CiscoController(SnmpPlugin):
         '.1.3.6.1.4.1.14179.1.1.5.2.0': 'agentTotalMemory',
         '.1.3.6.1.4.1.14179.2.3.1.17.0': 'bsnRFMobilityDomainName',
         '.1.3.6.1.4.1.14179.1.1.1.18.0': 'agentInventoryMaxNumberOfAPsSupported',
+        '.1.3.6.1.2.1.47.1.1.1.1.8.1': 'entPhysicalHardwareRev',
         })
 
     def process(self, device, results, log):
@@ -106,5 +107,14 @@ class CiscoController(SnmpPlugin):
                 max_ap
                 )
             maps.append(ObjectMap({'platformMaxAPs': int(max_ap)}))
+
+        hw_ver = getdata.get('entPhysicalHardwareRev', None)
+        if hw_ver:
+            log.debug(
+                '%s setting hardware version to %s',
+                self.name(),
+                hw_ver
+                )
+            maps.append(ObjectMap({'hwVersion': hw_ver}))
 
         return maps
