@@ -223,7 +223,7 @@ class CiscoWLAN(SnmpPlugin):
 
             if name is None:
                 continue
-            elif ignore_names_regex and re.match(ignore_names_regex, name):
+            elif ignore_names_regex and re.search(ignore_names_regex, name):
                 log.debug(
                     'Skipping WLAN %s due to zWlanWlanIgnoreNames',
                     name
