@@ -186,7 +186,7 @@ class CiscoAP(SnmpPlugin):
 
             if name is None:
                 continue
-            elif ignore_group_regex and re.match(ignore_group_regex, name):
+            elif ignore_group_regex and re.search(ignore_group_regex, name):
                 log.debug(
                     '%s skipping AP Group %s due to zWlanApGroupIgnoreNames',
                     self.name(),
@@ -217,7 +217,7 @@ class CiscoAP(SnmpPlugin):
 
             if name is None:
                 continue
-            elif ignore_ap_regex and re.match(ignore_ap_regex, name):
+            elif ignore_ap_regex and re.search(ignore_ap_regex, name):
                 log.debug(
                     '%s skipping AP %s due to zWlanApIgnoreNames',
                     self.name(),
