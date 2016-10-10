@@ -25,8 +25,6 @@ classes:
     label: Wireless Controller
     short_label: Controller
     properties:
-      apCount:
-        type: int
       # Aruba - wlsxSysExtHwVersion.0
       # Cisco - entPhysicalHardwareRev.1
       hwVersion:
@@ -34,6 +32,7 @@ classes:
       # Set by license modeler
       maxAPs:
         type: int
+      # Aruba - mobilityDomainName ("default" has no Name entry)
       # Cisco - bsnRFMobilityDomainName
       mobilityDomains:
         type: lines
@@ -378,10 +377,37 @@ classes:
     label: Aruba Controller
     short_label: Controller
     properties:
+      DEFAULTS:
+        type: string
+        grid_display: false
+        details_display: true
+      # wlsxSysExtSwitchListEntry indexes
       ip:
         label: IP Address
         short_label: IP
         type: string
+        grid_display: true
+      # sysExtSwitchLocation
+      location:
+        label: Location
+        grid_display: true
+      # sysExtSwitchSerNo
+      serial:
+        label: Serial
+      # sysExtSwitchStatus
+      status:
+        label: Status
+        type: int
+        #enum: {1: "Active", 2: "Inactive"}
+        enum: {1: "clear", 2: "critical"}
+        renderer: Zenoss.render.severity
+        grid_display: true
+        details_display: false
+      # sysExtSwitchSWVersion
+      swVersion:
+        label: Software Version
+        short_label: OS
+        grid_display: false
 
   ArubaLocalController:
     base: [ArubaRemoteController]
@@ -391,8 +417,11 @@ classes:
   ArubaMasterController:
     base: [ArubaRemoteController]
     label: Master Controller
+    plural_label: Master Controller
     short_label: Master
+    plural_short_label: Master
 
+  # Aruba does not report on this via SNMP
   DHCPPool:
     label: DHCP Pool
     properties:
@@ -449,6 +478,54 @@ classes:
 
   License:
     label: License
+    properties:
+      DEFAULTS:
+        type: string
+        grid_display: false
+        details_display: true
+      # Aruba - licenseService (colon split)
+      # Cisco - clmgmtLicenseMaxUsageCount
+      count:
+        label: Count
+        type: int
+        grid_display: true
+      # Aruba - sysExtLicenseExpires
+      # Cisco - clmgmtLicenseValidityPeriodRemaining (calculate)
+      expiration:
+        label: Expiration Date
+        short_label: Expiration
+      # Aruba - licenseService (colon split)
+      # clmgmtLicenseFeatureName
+      feature:
+        label: Feature
+        grid_display: true
+      status:
+        label: Status
+      # Aruba - sysExtLicenseFlags
+      #         E - enabled
+      #         A - auto-generated
+      #         R - reboot required
+      # Cisco - clmgmtLicenseStatus
+      #         1 - inactive
+      #         2 - not in use
+      #         3 - in use
+      #         4 - expired, in use
+      #         5 - expired, not in use
+      #         6 - usage count consumed
+      statusSev:
+        label: Status
+        enum:
+          E: "clear"
+          A: "clear"
+          R: "warning"
+          1: "debug"
+          2: "debug"
+          3: "clear"
+          4: "critical"
+          5: "debug"
+          6: "critical"
+        renderer: Zenoss.render.severity
+        details_display: false
 
   # "Interfaces" on Cisco WLC (physical interfaces are "ports")
   # "VLANs" on Aruba
@@ -491,6 +568,7 @@ classes:
       DEFAULTS:
         grid_display: true
         details_display: true
+      # Aruba - authServerInservice, authServerState?
       enabled:
         label: Enabled
         type: bool
@@ -499,23 +577,22 @@ classes:
         details_display: false
         label_width: 35
         content_width: 35
+      # Aruba - authServerAddress
       ip:
         label: IP Address
         short_label: IP
         type: string
+      # Aruba - authServerPort
       port:
         label: Port
         type: int
 
-  # Unsure if Cisco reports on this
+  # Cisco doesn't appear to report stats on this
   InternalDB:
     base: [AAAServer]
     label: Internal User Database
     short_label: Internal DB
     properties:
-      ip:
-        grid_display: false
-        details_display: false
       port:
         grid_display: false
         details_display: false
@@ -741,21 +818,37 @@ zProperties:
     type: lines
   zWlanApIgnoreModels:
     type: lines
-  zWlanWlanIgnoreNames:
+  zWlanDhcpIgnoreNames:
     type: string
+  zWlanDhcpIgnoreSubnets:
+    type: lines
+  zWlanInterfaceIgnoreNames:
+    type: string
+  zWlanInterfaceIgnoreSubnets:
+    type: lines
+  zWlanInterfaceIgnoreVlans:
+    tpye: lines
   zWlanServerIgnoreNames:
     type: string
   zWlanServerIgnoreSubnets:
     type: lines
   zWlanServerIgnoreTypes:
     type: lines
-  zWlanInterfaceIgnoreNames:
+  zWlanWlanIgnoreNames:
     type: string
-  zWlanInterfaceIgnoreSubnets:
-    type: lines
 
 
 device_classes:
+  /Network/Aruba/Controller:
+    remove: true
+    zProperties:
+      zCollectorPlugins:
+        - zenoss.snmp.DeviceMap
+        - zenoss.snmp.InterfaceMap
+        - zenoss.snmp.RouteMap
+        - zenoss.snmp.SnmpV3EngineIdMap
+      zPythonClass: ZenPacks.daviswr.WirelessController.ArubaController
+
   # To avoid conflict with /Network/Cisco/WLC from the Enterprise ZenPacks
   /Network/Cisco/Controller:
     remove: true
@@ -769,13 +862,3 @@ device_classes:
         - daviswr.snmp.CiscoAP
         - daviswr.snmp.CiscoWLAN
       zPythonClass: ZenPacks.daviswr.WirelessController.CiscoController
-
-  /Network/Aruba/Controller:
-    remove: true
-    zProperties:
-      zCollectorPlugins:
-        - zenoss.snmp.DeviceMap
-        - zenoss.snmp.InterfaceMap
-        - zenoss.snmp.RouteMap
-        - zenoss.snmp.SnmpV3EngineIdMap
-      zPythonClass: ZenPacks.daviswr.WirelessController.ArubaController
