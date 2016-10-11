@@ -162,6 +162,6 @@ class CiscoControllerDHCPPool(SnmpPlugin):
                 ))
 
         maps.append(rm)
-        log.debug('%s RelMaps:\n', maps)
+        log.debug('%s RelMaps:\n%s', self.name(), str(rm))
 
         return maps
