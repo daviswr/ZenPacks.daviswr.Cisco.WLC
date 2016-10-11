@@ -375,6 +375,6 @@ class CiscoControllerWLAN(SnmpPlugin):
             rm.append(ObjectMap(modname=class_name, data=row))
 
         maps.append(rm)
-        log.debug('%s RelMap:\n%s', self.name(), str(rm))
+        log.debug('%s RelMap:\n%s', self.name(), str(maps))
 
         return maps
