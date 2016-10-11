@@ -1,4 +1,4 @@
-__doc__ = """CiscoAP
+__doc__ = """CiscoControllerAP
 
 models access points and AP groups from a Cisco Wireless LAN Controller
 (WLC) running AireOS
@@ -13,8 +13,8 @@ from Products.DataCollector.plugins.CollectorPlugin \
 from Products.DataCollector.plugins.DataMaps \
     import MultiArgs, RelationshipMap, ObjectMap
 
-class CiscoAP(SnmpPlugin):
-    maptype = 'CiscoAP'
+class CiscoControllerAP(SnmpPlugin):
+    maptype = 'ControllerAP'
 
     deviceProperties = SnmpPlugin.deviceProperties + (
         'zWlanApGroupIgnoreNames',

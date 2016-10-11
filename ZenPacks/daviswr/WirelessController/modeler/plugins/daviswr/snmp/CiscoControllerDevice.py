@@ -1,4 +1,4 @@
-__doc__ = """CiscoController
+__doc__ = """CiscoControllerDevice
 
 gathers OS and hardware information from a Cisco Wireless LAN Controller 
 (WLC) running AireOS
@@ -10,8 +10,8 @@ from Products.DataCollector.plugins.CollectorPlugin \
 from Products.DataCollector.plugins.DataMaps \
     import MultiArgs, ObjectMap
 
-class CiscoController(SnmpPlugin):
-    maptype = 'CiscoController'
+class CiscoControllerDevice(SnmpPlugin):
+    maptype = 'ControllerDevice'
 
     snmpGetMap = GetMap({
         # entPhysicalDescr

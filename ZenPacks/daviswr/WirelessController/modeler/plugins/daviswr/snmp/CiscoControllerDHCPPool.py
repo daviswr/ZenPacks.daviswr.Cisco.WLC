@@ -1,6 +1,6 @@
-__doc__ = """CiscoDHCP
+__doc__ = """CiscoControllerDHCPPool
 
-models DHCP pool from a Cisco Wireless LAN Controller (WLC) running AireOS
+models DHCP pools from a Cisco Wireless LAN Controller (WLC) running AireOS
 
 """
 
@@ -12,8 +12,8 @@ from Products.DataCollector.plugins.CollectorPlugin \
 from Products.DataCollector.plugins.DataMaps \
     import MultiArgs, RelationshipMap, ObjectMap
 
-class CiscoDHCP(SnmpPlugin):
-    maptype = 'CiscoDHCP'
+class CiscoControllerDHCPPool(SnmpPlugin):
+    maptype = 'ControllerDHCPPool'
 
     deviceProperties = SnmpPlugin.deviceProperties + (
         'zWlanDhcpIgnoreNames',

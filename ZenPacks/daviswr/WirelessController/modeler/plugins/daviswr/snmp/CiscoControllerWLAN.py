@@ -1,4 +1,4 @@
-__doc__ = """CiscoWLAN
+__doc__ = """CiscoControllerWLAN
 
 models WLANs/SSIDs from a Cisco Wireless LAN Controller (WLC) running AireOS
 
@@ -11,8 +11,8 @@ from Products.DataCollector.plugins.CollectorPlugin \
 from Products.DataCollector.plugins.DataMaps \
     import MultiArgs, RelationshipMap, ObjectMap
 
-class CiscoWLAN(SnmpPlugin):
-    maptype = 'CiscoWLAN'
+class CiscoControllerWLAN(SnmpPlugin):
+    maptype = 'ControllerWLAN'
 
     deviceProperties = SnmpPlugin.deviceProperties + (
         'zWlanWlanIgnoreNames',

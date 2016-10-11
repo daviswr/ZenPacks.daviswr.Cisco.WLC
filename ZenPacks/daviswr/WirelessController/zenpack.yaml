@@ -483,6 +483,7 @@ classes:
         label_width: 80
         content_width: 80
 
+  # Should this extend Products.ZenModel.Software?
   License:
     label: License
     properties:
@@ -536,6 +537,7 @@ classes:
 
   # "Interfaces" on Cisco WLC (physical interfaces are "ports")
   # "VLANs" on Aruba
+  # Should this extend Products.ZenModel.IpInterface?
   VlanInterface:
     label: VLAN Interface
     short_label: VLAN
@@ -860,20 +862,34 @@ device_classes:
         - zenoss.snmp.InterfaceMap
         - zenoss.snmp.RouteMap
         - zenoss.snmp.SnmpV3EngineIdMap
+        - daviswr.snmp.ArubaControllerDevice
+        - daviswr.snmp.ArubaControllerAAA
+        - daviswr.snmp.ArubaControllerAP
+        - daviswr.snmp.ArubaControllerCPU
+        - daviswr.snmp.ArubaControllerFan
+        - daviswr.snmp.ArubaControllerLicense
+        - daviswr.snmp.ArubaControllerMasterLocal
+        - daviswr.snmp.ArubaControllerPowerSupply
+        - daviswr.snmp.ArubaControllerTemperature
+        - daviswr.snmp.ArubaControllerVLAN
+        - daviswr.snmp.ArubaControllerWLAN
       zPythonClass: ZenPacks.daviswr.WirelessController.ArubaController
 
   # To avoid conflict with /Network/Cisco/WLC from the Enterprise ZenPacks
   /Network/Cisco/Controller:
     remove: true
     zProperties:
-      # Modeler plugin names should probably have controller type in them
       zCollectorPlugins:
         - zenoss.snmp.DeviceMap
         - zenoss.snmp.InterfaceMap
         - zenoss.snmp.RouteMap
         - zenoss.snmp.SnmpV3EngineIdMap
-        - daviswr.snmp.CiscoController
-        - daviswr.snmp.CiscoAP
-        - daviswr.snmp.CiscoWLAN
-        - daviswr.snmp.CiscoDHCP
+        - daviswr.snmp.CiscoControllerDevice
+        - daviswr.snmp.CiscoControllerAAA
+        - daviswr.snmp.CiscoControllerAP
+        - daviswr.snmp.CiscoControllerDHCPPool
+        - daviswr.snmp.CiscoControllerLicense
+        - daviswr.snmp.CiscoControllerTemperature
+        - daviswr.snmp.CiscoControllerVLAN
+        - daviswr.snmp.CiscoControllerWLAN
       zPythonClass: ZenPacks.daviswr.WirelessController.CiscoController
