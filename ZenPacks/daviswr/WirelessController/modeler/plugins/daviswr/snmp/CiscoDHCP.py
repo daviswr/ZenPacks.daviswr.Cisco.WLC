@@ -129,7 +129,12 @@ class CiscoDHCP(SnmpPlugin):
             log.debug('%s found DHCP pool: %s', self.name(), name)
 
             # Clean up attributes
-            row['enabled'] = True if 1 == row['enabled'] else False
+            if 'enabled' in row:
+                row['enabled'] = True if 1 == row['enabled'] else False
+
+            if 'network' in row and 'netmask' in row:
+                cidr = str(self.maskToBits(row['netmask']))
+                row['network'] = '{0}/{1}'.format(row['network'], cidr)
 
             # DNS servers & default gateways
             dns = list()

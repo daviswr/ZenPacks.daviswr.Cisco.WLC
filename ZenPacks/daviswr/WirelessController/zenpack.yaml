@@ -461,14 +461,13 @@ classes:
         order: 2
         label_width: 80
         content_width: 80
-      # Cisco - agentDhcpScopeNetmask
-      netmask:
-        label: Netmask
-        order: 4
-      # Cisco - agentDhcpScopeNetwork
+      # Cisco - agentDhcpScopeNetwork, agentDhcpScopeNetmask
       network:
         label: Network
+        grid_display: true
         order: 3
+        label_width: 90
+        content_width: 90
       # Cisco - agentDhcpScopeDefaultRouterAddress(1|2|3)
       routers:
         label: Default Gateways
