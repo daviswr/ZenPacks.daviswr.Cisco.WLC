@@ -147,7 +147,7 @@ class CiscoControllerWLAN(SnmpPlugin):
         else:
             log.debug(
                 'bsnDot11EssTable has %s entries',
-                str(len(bsnDot11EssTable))
+                len(bsnDot11EssTable)
                 )
 
         cLWlanConfigTable = tabledata.get('cLWlanConfigTable')
@@ -157,7 +157,7 @@ class CiscoControllerWLAN(SnmpPlugin):
         else:
             log.debug(
                 'cLWlanConfigTable has %s entries',
-                str(len(cLWlanConfigTable))
+                len(cLWlanConfigTable)
                 )
 
         cLWSecDot11EssCckmTable = tabledata.get('cLWSecDot11EssCckmTable')
@@ -170,7 +170,7 @@ class CiscoControllerWLAN(SnmpPlugin):
         else:
             log.debug(
                 'cLWSecDot11EssCckmTable has %s entries',
-                str(len(cLWSecDot11EssCckmTable))
+                len(cLWSecDot11EssCckmTable)
                 )
 
         cLWSecDot11EssCkipTable = tabledata.get('cLWSecDot11EssCkipTable')
@@ -183,7 +183,7 @@ class CiscoControllerWLAN(SnmpPlugin):
         else:
             log.debug(
                 'cLWSecDot11EssCkipTable has %s entries',
-                str(len(cLWSecDot11EssCkipTable))
+                len(cLWSecDot11EssCkipTable)
                 )
 
         cldlServerTable = tabledata.get('cldlServerTable', dict())
@@ -193,7 +193,7 @@ class CiscoControllerWLAN(SnmpPlugin):
         else:
             log.debug(
                 'cldlServerTable has %s entries',
-                str(len(cldlServerTable))
+                len(cldlServerTable)
                 )
 
         cldlWlanLdapTable = tabledata.get('cldlWlanLdapTable', dict())
@@ -203,7 +203,7 @@ class CiscoControllerWLAN(SnmpPlugin):
         else:
             log.debug(
                 'cldlWlanLdapTable has %s entries',
-                str(len(cldlWlanLdapTable))
+                len(cldlWlanLdapTable)
                 )
 
         # Ignore criteria
@@ -288,7 +288,7 @@ class CiscoControllerWLAN(SnmpPlugin):
                     if attr in ['key_mgmt', 'wpa1_type', 'wpa2_type']:
                         # Hex dict keys get stored as integers
                         value = int(ord(value))
-                    row[attr] = attr_map[attr].get(value)
+                    row[attr] = attr_map[attr].get(value, row[attr])
 
             if row.get('dhcp') == '0.0.0.0':
                 del row['dhcp']
@@ -375,6 +375,6 @@ class CiscoControllerWLAN(SnmpPlugin):
             rm.append(ObjectMap(modname=class_name, data=row))
 
         maps.append(rm)
-        log.debug('%s RelMap:\n%s', self.name(), str(maps))
+        log.debug('%s RelMaps:\n%s', self.name(), str(maps))
 
         return maps

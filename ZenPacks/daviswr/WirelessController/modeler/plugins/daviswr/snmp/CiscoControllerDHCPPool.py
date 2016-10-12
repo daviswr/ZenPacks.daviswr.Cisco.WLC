@@ -72,7 +72,7 @@ class CiscoControllerDHCPPool(SnmpPlugin):
         else:
             log.debug(
                 'agentDhcpScopeTable has %s entries',
-                str(len(agentDhcpScopeTable))
+                len(agentDhcpScopeTable)
                 )
 
         # Ignore criteria
@@ -133,7 +133,7 @@ class CiscoControllerDHCPPool(SnmpPlugin):
                 row['enabled'] = True if 1 == row['enabled'] else False
 
             if 'network' in row and 'netmask' in row:
-                cidr = str(self.maskToBits(row['netmask']))
+                cidr = self.maskToBits(row['netmask'])
                 row['network'] = '{0}/{1}'.format(row['network'], cidr)
 
             # DNS servers & default gateways

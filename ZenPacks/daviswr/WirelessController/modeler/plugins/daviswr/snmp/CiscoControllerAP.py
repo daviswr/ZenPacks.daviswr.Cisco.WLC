@@ -154,29 +154,29 @@ class CiscoControllerAP(SnmpPlugin):
         bsnAPGroupsVlanTable = tabledata.get('bsnAPGroupsVlanTable')
         log.debug(
             'bsnAPGroupsVlanTable has %s entries',
-            str(len(bsnAPGroupsVlanTable))
+            len(bsnAPGroupsVlanTable)
             )
 
         bsnAPTable = tabledata.get('bsnAPTable')
-        log.debug('bsnAPTable has %s entries', str(len(bsnAPTable)))
+        log.debug('bsnAPTable has %s entries', len(bsnAPTable))
 
         cLApLinkLatencyTable = tabledata.get('cLApLinkLatencyTable', dict())
         log.debug(
             'cLApLinkLatencyTable has %s entries',
-            str(len(cLApLinkLatencyTable))
+            len(cLApLinkLatencyTable)
             )
 
         clcCdpApCacheTable = tabledata.get('clcCdpApCacheTable')
         log.debug(
             'clcCdpApCacheTable has %s entries',
-            str(len(clcCdpApCacheTable))
+            len(clcCdpApCacheTable)
             )
 
         bsnAPIfTable = tabledata.get('bsnAPIfTable')
-        log.debug('bsnAPIfTable has %s entries', str(len(bsnAPIfTable)))
+        log.debug('bsnAPIfTable has %s entries', len(bsnAPIfTable))
 
         cLApDot11IfTable = tabledata.get('cLApDot11IfTable', dict())
-        log.debug('cLApDot11IfTable has %s entries', str(len(cLApDot11IfTable)))
+        log.debug('cLApDot11IfTable has %s entries', len(cLApDot11IfTable))
 
         # Ignore criteria
         ignore_group_regex = getattr(device, 'zWlanApGroupIgnoreNames', '')
