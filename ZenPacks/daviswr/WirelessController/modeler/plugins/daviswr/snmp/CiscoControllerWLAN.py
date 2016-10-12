@@ -294,7 +294,7 @@ class CiscoControllerWLAN(SnmpPlugin):
                 del row['dhcp']
 
             # Security type
-            security = 'Open'
+            security = 'Wired' if row.get('wired') else 'Open'
             key_mgmt = row.get('key_mgmt', '')
 
             # Network is WPA
