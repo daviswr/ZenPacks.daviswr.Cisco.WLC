@@ -39,6 +39,8 @@ class CiscoControllerAP(SnmpPlugin):
         '.3': 'title',
         # bsnAPLocation
         '.4': 'location',
+        # bsnAPMonitorOnlyMode
+        '.5': 'mode',
         # bsnAPSoftwareVersion
         '.8': 'swVersion',
         # bsnAPBootVersion
@@ -61,6 +63,11 @@ class CiscoControllerAP(SnmpPlugin):
         '.33': 'mac',
         # bsnAPAdminStatus
         '.37': 'enabled',
+        }
+
+    cLApLinkLatencyEntry = {
+        # cLApLinkLatencyEnable
+        '.1': 'latency',
         }
 
     clcCdpApCacheEntry = {
@@ -107,6 +114,11 @@ class CiscoControllerAP(SnmpPlugin):
             bsnAPEntry
             ),
         GetTableMap(
+            'cLApLinkLatencyTable',
+            '.1.3.6.1.4.1.9.9.513.1.5.1.1',
+            cLApLinkLatencyEntry
+            ),
+        GetTableMap(
             'clcCdpApCacheTable',
             '.1.3.6.1.4.1.9.9.623.1.3.1.1',
             clcCdpApCacheEntry
@@ -135,6 +147,12 @@ class CiscoControllerAP(SnmpPlugin):
 
         bsnAPTable = tabledata.get('bsnAPTable')
         log.debug('bsnAPTable has %s entries', str(len(bsnAPTable)))
+
+        cLApLinkLatencyTable = tabledata.get('cLApLinkLatencyTable', dict())
+        log.debug(
+            'cLApLinkLatencyTable has %s entries',
+            str(len(cLApLinkLatencyTable))
+            )
 
         clcCdpApCacheTable = tabledata.get('clcCdpApCacheTable')
         log.debug(
@@ -242,7 +260,37 @@ class CiscoControllerAP(SnmpPlugin):
 
             log.debug('%s found AP: %s in group %s', self.name(), name, group)
 
+            # Merge latency table, same indexing
+            row.update(cLApLinkLatencyTable[snmpindex])
+
             # Clean up some values
+            attr_map = dict()
+            attr_map['enabled'] = {
+                1: True,
+                2: False,
+                }
+
+            attr_map['latency'] = {
+                1: True,
+                2: False,
+                }
+
+            attr_map['mode'] = {
+                0: 'Local',
+                1: 'Monitor',
+                # (H)REAP
+                2: 'FlexConnect',
+                3: 'Rogue Detector',
+                4: 'Sniffer',
+                5: 'Bridge',
+                #  CleanAir-enabled models only
+                6: 'Spectrum Expert Connect',
+                }
+
+            for attr in attr_map:
+                if attr in row:
+                    row[attr] = attr_map[attr][row[attr]]
+          
             macs = [
                 'radioMac',
                 'mac',
@@ -298,6 +346,11 @@ class CiscoControllerAP(SnmpPlugin):
                 0: 'Connector A',
                 1: 'Connector B',
                 255: 'Enabled',
+                }
+
+            attr_map['enabled'] = {
+                1: True,
+                2: False,
                 }
 
             attr_map['mode'] = {
