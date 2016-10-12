@@ -46,7 +46,7 @@ class CiscoControllerTemperature(SnmpPlugin):
         else:
             log.debug(
                 'bsnSensorTemperature has %s entries',
-                str(len(bsnSensorTemperature)),
+                len(bsnSensorTemperature),
                 )
 
         # Temperator sensors
@@ -54,7 +54,8 @@ class CiscoControllerTemperature(SnmpPlugin):
 
         for snmpindex in bsnSensorTemperature:
             row = bsnSensorTemperature[snmpindex]
-            name = 'Temperature Sensor {}'.format(snmpindex.replace('.', ''))
+            num = int(snmpindex.replace('.', '')) + 1
+            name = 'Temperature Sensor {}'.format(num)
 
             # Clean up attributes
             attr_map = dict()
@@ -65,7 +66,7 @@ class CiscoControllerTemperature(SnmpPlugin):
 
             for attr in attr_map:
                 if attr in row:
-                    row[attr] = attr_map[attr].get(row[attr], 'Unknown')
+                    row[attr] = attr_map[attr].get(row[attr], row[attr])
 
             if 'temperature_celsius' in row:
                 temp_f = (row['temperature_celsius'] * (9/5)) + 32
