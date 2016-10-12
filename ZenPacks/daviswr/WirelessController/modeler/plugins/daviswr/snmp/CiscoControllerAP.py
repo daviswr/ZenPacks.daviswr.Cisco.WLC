@@ -102,6 +102,13 @@ class CiscoControllerAP(SnmpPlugin):
         '.34': 'enabled',
         }
 
+    cLApDot11IfEntry = {
+        # cLApDot11nSupport
+        '.4': '11n',
+        # cLAp11nChannelBandwidth
+        '.5': 'width',
+        }
+
     snmpGetTableMaps = (
         GetTableMap(
             'bsnAPGroupsVlanTable',
@@ -127,6 +134,11 @@ class CiscoControllerAP(SnmpPlugin):
             'bsnAPIfTable',
             '.1.3.6.1.4.1.14179.2.2.2.1',
             bsnAPIfEntry
+            ),
+        GetTableMap(
+            'cLApDot11IfTable',
+            '.1.3.6.1.4.1.9.9.513.1.2.1.1',
+            cLApDot11IfEntry
             ),
         )
 
@@ -162,6 +174,9 @@ class CiscoControllerAP(SnmpPlugin):
 
         bsnAPIfTable = tabledata.get('bsnAPIfTable')
         log.debug('bsnAPIfTable has %s entries', str(len(bsnAPIfTable)))
+
+        cLApDot11IfTable = tabledata.get('cLApDot11IfTable', dict())
+        log.debug('cLApDot11IfTable has %s entries', str(len(cLApDot11IfTable)))
 
         # Ignore criteria
         ignore_group_regex = getattr(device, 'zWlanApGroupIgnoreNames', '')
@@ -261,7 +276,7 @@ class CiscoControllerAP(SnmpPlugin):
             log.debug('%s found AP: %s in group %s', self.name(), name, group)
 
             # Merge latency table, same indexing
-            row.update(cLApLinkLatencyTable[snmpindex])
+            row.update(cLApLinkLatencyTable.get(snmpindex, dict()))
 
             # Clean up some values
             attr_map = dict()
@@ -270,10 +285,7 @@ class CiscoControllerAP(SnmpPlugin):
                 2: False,
                 }
 
-            attr_map['latency'] = {
-                1: True,
-                2: False,
-                }
+            attr_map['latency'] = attr_map['enabled']
 
             attr_map['mode'] = {
                 0: 'Local',
@@ -289,8 +301,8 @@ class CiscoControllerAP(SnmpPlugin):
 
             for attr in attr_map:
                 if attr in row:
-                    row[attr] = attr_map[attr][row[attr]]
-          
+                    row[attr] = attr_map[attr].get(row[attr], row[attr])
+
             macs = [
                 'radioMac',
                 'mac',
@@ -333,31 +345,13 @@ class CiscoControllerAP(SnmpPlugin):
             ap_index = '.'.join(snmpindex.split('.')[:-1]).strip('.')
             radio_index = snmpindex.replace(ap_index, '').strip('.')
 
-            # Could rely on enums in the yaml
-            # but this should make human-readable values
-            # available in zendmd, etc?
+            # Merge with other AP radio table, same indexing
+            row.update(cLApDot11IfTable.get(snmpindex, dict()))
+
             attr_map = dict()
-            attr_map['band'] = {
-                1: '2.4 GHz',
-                2: '5 GHz',
-                }
-
-            attr_map['diversity'] = {
-                0: 'Connector A',
-                1: 'Connector B',
-                255: 'Enabled',
-                }
-
-            attr_map['enabled'] = {
+            attr_map['11n'] = {
                 1: True,
                 2: False,
-                }
-
-            attr_map['mode'] = {
-                1: 'Sector A',
-                2: 'Sector B',
-                3: 'Omnidirectional',
-                99: 'Not Applicable',
                 }
 
             attr_map['antenna'] = {
@@ -370,6 +364,36 @@ class CiscoControllerAP(SnmpPlugin):
                 2: 'Customized',
                 }
 
+            attr_map['band'] = {
+                1: '2.4 GHz',
+                2: '5 GHz',
+                }
+
+            attr_map['diversity'] = {
+                # Right?
+                0: 'Connector A',
+                # Left?
+                1: 'Connector B',
+                255: 'Enabled',
+                }
+
+            attr_map['enabled'] = attr_map['11n']
+
+            attr_map['mode'] = {
+                1: 'Sector A',
+                2: 'Sector B',
+                3: 'Omnidirectional',
+                99: 'Not Applicable',
+                }
+
+            attr_map['width'] = {
+                1: '5 MHz',
+                2: '10 MHz',
+                3: '20 MHz',
+                4: '40 MHz',
+                # CISCO-LWAPP-AP-MIB does not have values for 80- or 160-MHz
+                }
+
             for attr in attr_map:
                 if attr in row:
                     row[attr] = attr_map[attr].get(row[attr], row[attr])
@@ -377,6 +401,16 @@ class CiscoControllerAP(SnmpPlugin):
             # Gain is reported in multiples of 0.5 dBm
             if 'gain' in row:
                 row['gain'] = row['gain']*0.5
+
+            # IEEE 802.11 radio type
+            dot11_map = {
+                '2.4 GHz': 'b/g',
+                '5 GHz': 'a',
+                }
+            row['dot11'] = '802.11'
+            row['dot11'] += dot11_map.get(row.get('band'), '')
+            if row.get('11n'):
+                row['dot11'] += '/n'
 
             log.debug(
                 '%s found radio %s for AP index %s',
@@ -429,10 +463,11 @@ class CiscoControllerAP(SnmpPlugin):
                         ap_id,
                         radio_index
                         ))
-                    radio['title'] = '{0} Radio {1}'.format(
-                        ap_name,
-                        radio_index,
-                        )
+                    if 'dot11' in radio:
+                        title = '{0} {1}'.format(ap_name, radio['dot11'])
+                    else:
+                        title = '{0} Radio {1}'.format(ap_name, radio_index)
+                    radio['title'] = title
                     radio_rm.append(ObjectMap(
                         modname='ZenPacks.daviswr.WirelessController.CiscoAPRadio',
                         data=radio
@@ -446,5 +481,6 @@ class CiscoControllerAP(SnmpPlugin):
         maps.append(group_rm)
         maps += ap_rm_list
         maps += radio_rm_list
+        log.debug('%s RelMaps:\n%s', self.name(), str(maps))
 
         return maps

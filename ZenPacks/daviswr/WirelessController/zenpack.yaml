@@ -276,7 +276,7 @@ classes:
       band:
         label: Band
         grid_display: true
-        order: 1
+        order: 2
         label_width: 45
         content_width: 45
       # Aruba - wlanAPExternalAntenna (on AP)
@@ -285,7 +285,7 @@ classes:
         label: Antenna Type
         short_label: Antenna
         grid_display: true
-        order: 4
+        order: 6
         label_width: 55
         content_width: 55
       # Aruba - wlanAPRadioChannel
@@ -295,16 +295,30 @@ classes:
         short_label: Channel
         type: int
         grid_display: true
-        order: 2
+        order: 3
         label_width: 40
         content_width: 40
+      # Aruba - wlanAPRadioType + wlanAPRadioHTMode
+      # Cisco - bsnAPIfType + cLApDot11nSupport (11ac?)
+      dot11:
+        label: Radio Type
+        short_label: Type
+        order: 1
+        label_width: 45
+        content_width: 45
       # Aruba - wlanAPdot11aAntennaGain, wlanAPdot11gAntennaGain (on AP)
       # Cisco - bsnAPIfAntennaGain
       gain:
         label: Antenna Gain (dBm)
         short_label: Gain
         type: float
-        order: 5
+        order: 7
+      # Aruba - wlanAPRadioHTMode
+      # Cisco - cLAp11nChannelBandwidth
+      width:
+        label: Bandwidth
+        short_label: Width
+        order: 4
 
   ArubaAPRadio:
     base: [APRadio]
@@ -336,11 +350,6 @@ classes:
         datapoint: wlanAPRadioUtilization_wlanAPRadioUtilization
         label_width: 35
         content_width: 35
-      # wlanAPRadioHTMode
-      htMode:
-        label: High-Throughput Mode
-        short_label: HT Mode
-        type: string
 
   CiscoAPRadio:
     base: [APRadio]
@@ -354,17 +363,17 @@ classes:
       # bsnAPIfPhyAntennaMode
       mode:
         label: Antenna Mode
-        order: 6
+        order: 8
       # bsnAPIfPhyChannelAssignment
       assignment:
         label: Channel Assignment
         short_label: Assignment
-        order: 3
+        order: 5
       # bsnAPIfPhyAntennaDiversity
       diversity:
         label: Antenna Diversity
         short_label: Diversity
-        order: 7
+        order: 9
       # bsnAPIfAdminStatus
       enabled:
         label: Enabled
@@ -373,7 +382,7 @@ classes:
         enum: {true: "clear", false: "debug"}
         renderer: Zenoss.render.severity
         grid_display: true
-        order: 9
+        order: 10
         label_width: 35
         content_width: 35
         details_display: false
