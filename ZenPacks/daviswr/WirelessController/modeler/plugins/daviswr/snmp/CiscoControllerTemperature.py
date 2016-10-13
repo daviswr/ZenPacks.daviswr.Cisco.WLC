@@ -69,6 +69,12 @@ class CiscoControllerTemperature(SnmpPlugin):
                     row[attr] = attr_map[attr].get(row[attr], row[attr])
 
             if 'temperature_celsius' in row:
+                # The WiSM lacks a temperature sensor, returns 5000 deg. C
+                if 5000 == row['temperature_celsius']:
+                    log.debug(
+                        'Cisco WiSM detected, skipping temperature sensor model'
+                        )
+                    return None
                 temp_f = (row['temperature_celsius'] * (9/5)) + 32
                 row['temperature_fahrenheit'] = temp_f
 
