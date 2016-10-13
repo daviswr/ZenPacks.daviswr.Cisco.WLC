@@ -604,7 +604,7 @@ classes:
     short_label: AAA
     properties:
       DEFAULTS:
-        grid_display: true
+        grid_display: false
         details_display: true
       # Aruba - authServerInservice, authServerState?
       enabled:
@@ -612,7 +612,9 @@ classes:
         type: bool
         enum: {true: "clear", false: "debug"}
         renderer: Zenoss.render.severity
+        grid_display: true
         details_display: false
+        order: 10
         label_width: 35
         content_width: 35
       # Aruba - authServerAddress
@@ -620,12 +622,16 @@ classes:
         label: IP Address
         short_label: IP
         type: string
+        order: 1
         label_width: 80
         content_width: 80
       # Aruba - authServerPort
       port:
         label: Port
         type: int
+        order: 2
+        label_width: 35
+        content_width: 35
 
   # Cisco doesn't appear to report stats on this
   InternalDB:
@@ -647,6 +653,23 @@ classes:
     # Cisco - cldlServerAddress
     # port
     # Cisco - cldlServerPortNum
+    properties:
+      DEFAULTS:
+        type: string
+        grid_display: false
+        details_display: true
+      baseDN:
+        label: Base DN
+        short_label: Base
+        order: 5
+      user:
+        label: Bind User 
+        short_label: Bind
+        order: 7
+      userAttr:
+        label: User Attribute
+        short_label: Attribute
+        order: 6
 
   RadiusServer:
     base: [AAAServer]
