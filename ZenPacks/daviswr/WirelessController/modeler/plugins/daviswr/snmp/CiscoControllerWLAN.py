@@ -14,6 +14,9 @@ from Products.DataCollector.plugins.DataMaps \
 class CiscoControllerWLAN(SnmpPlugin):
     maptype = 'ControllerWLAN'
 
+    relname = 'wlans'
+    modname = 'ZenPacks.daviswr.WirelessController.WLAN'
+
     deviceProperties = SnmpPlugin.deviceProperties + (
         'zWlanWlanIgnoreNames',
         )
@@ -135,7 +138,6 @@ class CiscoControllerWLAN(SnmpPlugin):
     def process(self, device, results, log):
         """collect snmp information from this device"""
         log.info('processing %s for device %s', self.name(), device.id)
-        maps = list()
         getdata, tabledata = results
 
         log.debug('SNMP Tables:\n%s', tabledata)
@@ -212,10 +214,7 @@ class CiscoControllerWLAN(SnmpPlugin):
             log.info('zWlanWlanIgnoreNames set to %s', ignore_names_regex)
 
         # WLANs
-        rm = RelationshipMap(
-            relname='wlans',
-            modname='ZenPacks.daviswr.WirelessController.WLAN'
-            )
+        rm = self.relMap()
 
         for snmpindex in bsnDot11EssTable:
             row = bsnDot11EssTable[snmpindex]
@@ -374,7 +373,5 @@ class CiscoControllerWLAN(SnmpPlugin):
 
             rm.append(ObjectMap(modname=class_name, data=row))
 
-        maps.append(rm)
-        log.debug('%s RelMaps:\n%s', self.name(), str(maps))
-
-        return maps
+        log.debug('%s RelMap:\n%s', self.name(), str(rm))
+        return rm

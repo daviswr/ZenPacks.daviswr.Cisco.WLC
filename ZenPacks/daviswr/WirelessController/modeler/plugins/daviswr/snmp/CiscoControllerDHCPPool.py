@@ -15,6 +15,9 @@ from Products.DataCollector.plugins.DataMaps \
 class CiscoControllerDHCPPool(SnmpPlugin):
     maptype = 'ControllerDHCPPool'
 
+    relname = 'dhcpPools'
+    modname = 'ZenPacks.daviswr.WirelessController.DHCPPool'
+
     deviceProperties = SnmpPlugin.deviceProperties + (
         'zWlanDhcpIgnoreNames',
         'zWlanDhcpIgnoreSubnets',
@@ -60,7 +63,6 @@ class CiscoControllerDHCPPool(SnmpPlugin):
     def process(self, device, results, log):
         """collect snmp information from this device"""
         log.info('processing %s for device %s', self.name(), device.id)
-        maps = list()
         getdata, tabledata = results
 
         log.debug('SNMP Tables:\n%s', tabledata)
@@ -95,10 +97,7 @@ class CiscoControllerDHCPPool(SnmpPlugin):
                     continue
 
         # DHCP pools
-        rm = RelationshipMap(
-            relname='dhcpPools',
-            modname='ZenPacks.daviswr.WirelessController.DHCPPool'
-            )
+        rm = self.relMap()
 
         for snmpindex in agentDhcpScopeTable:
             skip_net = False
@@ -161,7 +160,6 @@ class CiscoControllerDHCPPool(SnmpPlugin):
                 data=row
                 ))
 
-        maps.append(rm)
-        log.debug('%s RelMaps:\n%s', self.name(), str(maps))
+        log.debug('%s RelMap:\n%s', self.name(), str(rm))
 
-        return maps
+        return rm

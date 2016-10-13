@@ -34,7 +34,6 @@ class CiscoControllerTemperature(SnmpPlugin):
     def process(self, device, results, log):
         """collect snmp information from this device"""
         log.info('processing %s for device %s', self.name(), device.id)
-        maps = list()
         getdata, tabledata = results
 
         log.debug('SNMP Tables:\n%s', tabledata)
