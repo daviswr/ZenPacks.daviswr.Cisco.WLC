@@ -284,10 +284,7 @@ classes:
       antenna:
         label: Antenna Type
         short_label: Antenna
-        grid_display: true
         order: 6
-        label_width: 55
-        content_width: 55
       # Aruba - wlanAPRadioChannel
       # Cisco - bsnAPIfPhyChannelNumber
       channel:
@@ -303,9 +300,10 @@ classes:
       dot11:
         label: Radio Type
         short_label: Type
+        grid_display: true
         order: 1
-        label_width: 45
-        content_width: 45
+        label_width: 50
+        content_width: 50
       # Aruba - wlanAPdot11aAntennaGain, wlanAPdot11gAntennaGain (on AP)
       # Cisco - bsnAPIfAntennaGain
       gain:

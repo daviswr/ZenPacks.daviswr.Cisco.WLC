@@ -226,7 +226,7 @@ class CiscoControllerAP(SnmpPlugin):
                     )
                 continue
 
-            log.debug('%s found AP Group: %s', self.name(), name)
+            log.debug('Found AP Group: %s', name)
 
             row.update({
                 'snmpindex': snmpindex.strip('.'),
@@ -273,7 +273,7 @@ class CiscoControllerAP(SnmpPlugin):
                     )
                 continue
 
-            log.debug('%s found AP: %s in group %s', self.name(), name, group)
+            log.debug('Found AP: %s in group %s', name, group)
 
             # Merge latency table, same indexing
             row.update(cLApLinkLatencyTable.get(snmpindex, dict()))
@@ -403,18 +403,18 @@ class CiscoControllerAP(SnmpPlugin):
                 row['gain'] = row['gain']*0.5
 
             # IEEE 802.11 radio type
-            dot11_map = {
-                '2.4 GHz': 'b/g',
-                '5 GHz': 'a',
-                }
             row['dot11'] = '802.11'
-            row['dot11'] += dot11_map.get(row.get('band'), '')
             if row.get('11n'):
-                row['dot11'] += '/n'
+                row['dot11'] += 'n'
+            else:
+                dot11_map = {
+                    '2.4 GHz': 'g',
+                    '5 GHz': 'a',
+                    }
+                row['dot11'] += dot11_map.get(row.get('band'), '')
 
             log.debug(
-                '%s found radio %s for AP index %s',
-                self.name(),
+                'Found radio %s for AP index %s',
                 radio_index,
                 ap_index
                 )
@@ -463,11 +463,10 @@ class CiscoControllerAP(SnmpPlugin):
                         ap_id,
                         radio_index
                         ))
-                    if 'dot11' in radio:
-                        title = '{0} {1}'.format(ap_name, radio['dot11'])
-                    else:
-                        title = '{0} Radio {1}'.format(ap_name, radio_index)
-                    radio['title'] = title
+                    radio['title'] = '{0} Slot {1}'.format(
+                        ap_name,
+                        radio_index
+                        )
                     radio_rm.append(ObjectMap(
                         modname='ZenPacks.daviswr.WirelessController.CiscoAPRadio',
                         data=radio
