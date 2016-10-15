@@ -229,7 +229,7 @@ class CiscoControllerAAA(SnmpPlugin):
 
             if ip is None:
                 continue
-            elif self.ip_in_nets(ip, ignore_types_list):
+            elif self.ip_in_nets(ip, ignore_nets):
                 log.debug(
                     'Skipping RADIUS acct server %s due to zWlanServerIgnoreSubnets',
                     ip
@@ -268,6 +268,7 @@ class CiscoControllerAAA(SnmpPlugin):
                     'Skipping %s server due to zWlanServerIgnoreTypes',
                     tac_type
                     )
+                continue
 
             if 'ip' in row and row.get('ip_type', 0) == 1:
                 row['ip'] = self.asip(row['ip'])
