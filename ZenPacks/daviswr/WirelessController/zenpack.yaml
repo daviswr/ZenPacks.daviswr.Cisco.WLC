@@ -956,3 +956,7 @@ device_classes:
         - daviswr.snmp.CiscoControllerVLAN
         - daviswr.snmp.CiscoControllerWLAN
       zPythonClass: ZenPacks.daviswr.WirelessController.CiscoController
+      # AireOS does not report stats for LDAP or TACACS servers
+      zWlanServerIgnoreTypes:
+        - ldap
+        - tacacs
