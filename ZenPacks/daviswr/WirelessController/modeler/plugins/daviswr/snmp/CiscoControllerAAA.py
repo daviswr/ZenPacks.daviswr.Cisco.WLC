@@ -207,6 +207,10 @@ class CiscoControllerAAA(SnmpPlugin):
                     )
                 continue
 
+            # Clean up attributes
+            if 'enabled' in row:
+                row['enabled'] = True if 1 == row['enabled'] else False
+
             row['title'] = self.format_title(ip, row.get('port'))
             row['id'] = self.prepId('radauth_{}'.format(row['title']))
             row['snmpindex'] = snmpindex.strip('.')
@@ -236,6 +240,9 @@ class CiscoControllerAAA(SnmpPlugin):
                     )
                 continue
 
+            # Clean up attributes
+            if 'enabled' in row:
+                row['enabled'] = True if 1 == row['enabled'] else False
             row['title'] = self.format_title(ip, row.get('port'))
             row['id'] = self.prepId('radacct_{}'.format(row['title']))
             row['snmpindex'] = snmpindex.strip('.')
@@ -246,6 +253,7 @@ class CiscoControllerAAA(SnmpPlugin):
                 data=row
                 ))
 
+        # TACACS servers
         # Empty SNMP TACACS servers table if we're ignoring TACACS
         if 'tacacs' in ignore_types_list:
             log.info(
