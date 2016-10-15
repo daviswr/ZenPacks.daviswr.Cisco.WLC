@@ -653,23 +653,23 @@ classes:
     # Cisco - cldlServerAddress
     # port
     # Cisco - cldlServerPortNum
-    properties:
-      DEFAULTS:
-        type: string
-        grid_display: false
-        details_display: true
-      baseDN:
-        label: Base DN
-        short_label: Base
-        order: 5
-      user:
-        label: Bind User 
-        short_label: Bind
-        order: 7
-      userAttr:
-        label: User Attribute
-        short_label: Attribute
-        order: 6
+    #properties:
+    #  DEFAULTS:
+    #    type: string
+    #    grid_display: false
+    #    details_display: true
+    #  baseDN:
+    #    label: Base DN
+    #    short_label: Base
+    #    order: 5
+    #  user:
+    #    label: Bind User 
+    #    short_label: Bind
+    #    order: 7
+    #  userAttr:
+    #    label: User Attribute
+    #    short_label: Attribute
+    #    order: 6
 
   RadiusServer:
     base: [AAAServer]

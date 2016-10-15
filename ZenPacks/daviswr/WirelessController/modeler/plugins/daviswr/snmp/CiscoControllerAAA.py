@@ -33,12 +33,24 @@ class CiscoControllerAAA(SnmpPlugin):
         '.4': 'port',
         # cldlServerState
         '.5': 'enabled',
-        # cldlServerUserBase
-        '.7': 'baseDN',
-        # cldlServerUserNameAttribute
-        '.8': 'userAttr',
-        # cldlServerAuthBindUserName
-        '.14': 'user',
+        }
+
+    bsnRadiusAuthServerEntry = {
+        # bsnRadiusAuthServerAddress
+        '.2': 'ip',
+        # bsnRadiusAuthClientServerPortNumber
+        '.3': 'port',
+        # bsnRadiusAuthServerStatus
+        '.5': 'enabled',
+        }
+
+    bsnRadiusAccServerEntry = {
+        # bsnRadiusAccServerAddress
+        '.2': 'ip',
+        # bsnRadiusAccClientServerPortNumber
+        '.3': 'port',
+        # bsnRadiusAccServerStatus
+        '.5': 'enabled',
         }
 
     snmpGetTableMaps = (
@@ -46,6 +58,16 @@ class CiscoControllerAAA(SnmpPlugin):
             'cldlServerTable',
             '.1.3.6.1.4.1.9.9.614.1.1.1.1',
             cldlServerEntry
+            ),
+        GetTableMap(
+            'bsnRadiusAuthServerTable',
+            '.1.3.6.1.4.1.14179.2.5.1.1',
+            bsnRadiusAuthServerEntry
+            ),
+        GetTableMap(
+            'bsnRadiusAccServerTable',
+            '.1.3.6.1.4.1.14179.2.5.2.1',
+            bsnRadiusAccServerEntry
             ),
         )
 
@@ -57,23 +79,27 @@ class CiscoControllerAAA(SnmpPlugin):
         log.debug('SNMP Tables:\n%s', tabledata)
 
         cldlServerTable = tabledata.get('cldlServerTable', dict())
-        if not cldlServerTable:
-            # Not fatal
-            log.warn('Unable to get cldlServerTable from %s', device.id)
-        else:
-            log.debug(
-                'cldlServerTable has %s entries',
-                len(cldlServerTable)
-                )
+        log.debug('cldlServerTable has %s entries', len(cldlServerTable))
+
+        bsnRadiusAuthServerTable = tabledata.get(
+            'bsnRadiusAuthServerTable',
+            dict()
+            )
+        log.debug(
+            'bsnRadiusAuthServerTable has %s entries',
+            len(bsnRadiusAuthServerTable)
+            )
+
+        bsnRadiusAccServerTable = tabledata.get(
+            'bsnRadiusAccServerTable',
+            dict()
+            )
+        log.debug(
+            'bsnRadiusAccServerTable has %s entries',
+            len(bsnRadiusAccServerTable)
+            )
 
         # Ignore criteria
-        ignore_names_regex = getattr(device, 'zWlanServerIgnoreNames', '')
-        if ignore_names_regex:
-            log.info(
-                'zWlanServerIgnoreNames set to %s',
-                ignore_names_regex
-                )
-
         ignore_net_text = getattr(device, 'zWlanServerIgnoreSubnets', list())
         ignore_nets = list()
         if ignore_net_text:
@@ -99,7 +125,7 @@ class CiscoControllerAAA(SnmpPlugin):
 
         # LDAP servers
         # Empty SNMP LDAP servers table if we're ignoring LDAP
-        if 'LDAP' in ignore_types_list or 'ldap' in ignore_types_list:
+        if 'ldap' in ignore_types_list:
             log.info('Skipping all LDAP servers due to zWlanServerIgnoreTypes')
             cldlServerTable = dict()
         for snmpindex in cldlServerTable:
@@ -128,10 +154,12 @@ class CiscoControllerAAA(SnmpPlugin):
                 else:
                     row['title'] = row['ip']
 
-            else:
+            elif 'ip' in row:
                 row['title'] = 'LDAP Server {}'.format(
                     snmpindex.replace('.', '')
                     )
+            else:
+                continue
 
             # Clean up attributes
             if 'enabled' in row:
@@ -141,6 +169,75 @@ class CiscoControllerAAA(SnmpPlugin):
 
             rm.append(ObjectMap(
                 modname='ZenPacks.daviswr.WirelessController.LDAPServer',
+                data=row
+                ))
+
+        # RADIUS servers
+        # Empty SNMP RADIUS auth servers table if we're ignoring them
+        if 'radiusauth' in ignore_types_list or 'radius' in ignore_types_list:
+            log.info('Skipping all RADIUS authentication servers due to zWlanServerIgnoreTypes')
+            bsnRadiusAuthServerTable = dict()
+        for snmpindex in bsnRadiusAuthServerTable:
+            row = bsnRadiusAuthServerTable[snmpindex]
+            ip = row.get('ip')
+            skip_net = False
+
+            if ip is None:
+                continue
+
+            for net in ignore_nets:
+                if net.Contains(ipaddr.IPAddress(ip)):
+                    skip_net = True
+                    break
+            if skip_net:
+                log.debug(
+                    'Skipping RADIUS authentication server %s due to zWlanServerIgnoreSubnets',
+                    ip
+                    )
+                continue
+
+            row['title'] = '{0}:{1}'.format(ip, row.get('port')) \
+                if 'port' in row \
+                else ip
+
+            row['id'] = self.prepId('radauth_{}'.format(row['title']))
+
+            rm.append(ObjectMap(
+                modname='ZenPacks.daviswr.WirelessController.RadAuthServer',
+                data=row
+                ))
+
+        # Empty SNMP RADIUS acct servers table if we're ignoring them
+        if 'radiusacct' in ignore_types_list or 'radius' in ignore_types_list:
+            log.info('Skipping all RADIUS accounting servers due to zWlanServerIgnoreTypes')
+            bsnRadiusAccServerTable = dict()
+        for snmpindex in bsnRadiusAccServerTable:
+            row = bsnRadiusAccServerTable[snmpindex]
+            ip = row.get('ip')
+            skip_net = False
+
+            if ip is None:
+                continue
+
+            for net in ignore_nets:
+                if net.Contains(ipaddr.IPAddress(ip)):
+                    skip_net = True
+                    break
+            if skip_net:
+                log.debug(
+                    'Skipping RADIUS accounting server %s due to zWlanServerIgnoreSubnets',
+                    ip
+                    )
+                continue
+
+            row['title'] = '{0}:{1}'.format(ip, row.get('port')) \
+                if 'port' in row \
+                else ip
+
+            row['id'] = self.prepId('radacct_{}'.format(row['title']))
+
+            rm.append(ObjectMap(
+                modname='ZenPacks.daviswr.WirelessController.RadAcctServer',
                 data=row
                 ))
 
