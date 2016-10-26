@@ -19,7 +19,6 @@ class CiscoControllerAAA(SnmpPlugin):
     modname = 'ZenPacks.daviswr.WirelessController.AAAServer'
 
     deviceProperties = SnmpPlugin.deviceProperties + (
-        'zWlanServerIgnoreNames',
         'zWlanServerIgnoreSubnets',
         'zWlanServerIgnoreTypes',
         )
