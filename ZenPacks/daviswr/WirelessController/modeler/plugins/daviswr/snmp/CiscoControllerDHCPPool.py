@@ -100,7 +100,6 @@ class CiscoControllerDHCPPool(SnmpPlugin):
         rm = self.relMap()
 
         for snmpindex in agentDhcpScopeTable:
-            skip_net = False
             row = agentDhcpScopeTable[snmpindex]
             name = row.get('title', None)
             network = row.get('network', '')
@@ -113,12 +112,7 @@ class CiscoControllerDHCPPool(SnmpPlugin):
                     name
                     )
                 continue
-
-            for net in ignore_nets:
-                if network and net.Contains(ipaddr.IPAddress(network)):
-                    skip_net = True
-                    break
-            if skip_net:
+            elif self.ip_in_nets(network, ignore_nets):
                 log.debug(
                     'Skipping DHCP Pool due to zWlanDhcpIgnoreSubnets',
                     name
@@ -163,3 +157,17 @@ class CiscoControllerDHCPPool(SnmpPlugin):
         log.debug('%s RelMap:\n%s', self.name(), str(rm))
 
         return rm
+
+
+    def ip_in_nets(self, ip, nets):
+        """Determines if an IP address is in a subnet in a list"""
+        contains = False
+        for net in nets:
+            try:
+                if net.Contains(ipaddr.IPAddress(ip)):
+                    contains = True
+                    break
+            except:
+                log.warn('%s ip not a valid IP address', ip)
+                break
+        return contains

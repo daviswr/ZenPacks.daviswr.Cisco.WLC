@@ -240,7 +240,6 @@ class CiscoControllerAP(SnmpPlugin):
         # Access Points
         ap_radios = dict()
         for snmpindex in bsnAPTable:
-            skip_net = False
             row = bsnAPTable[snmpindex]
             name = row.get('title', None)
             model = row.get('model', '')
@@ -261,12 +260,7 @@ class CiscoControllerAP(SnmpPlugin):
                     name
                     )
                 continue
-
-            for net in ignore_nets:
-                if ip and net.Contains(ipaddr.IPAddress(ip)):
-                    skip_net = True
-                    break
-            if skip_net:
+            elif self.ip_in_nets(ip, ignore_nets):
                 log.debug(
                     'Skipping AP due to zWlanApIgnoreSubnets',
                     name
@@ -483,3 +477,17 @@ class CiscoControllerAP(SnmpPlugin):
         log.debug('%s RelMaps:\n%s', self.name(), str(maps))
 
         return maps
+
+
+    def ip_in_nets(self, ip, nets):
+        """Determines if an IP address is in a subnet in a list"""
+        contains = False
+        for net in nets:
+            try:
+                if net.Contains(ipaddr.IPAddress(ip)):
+                    contains = True
+                    break
+            except:
+                log.warn('%s ip not a valid IP address', ip)
+                break
+        return contains
