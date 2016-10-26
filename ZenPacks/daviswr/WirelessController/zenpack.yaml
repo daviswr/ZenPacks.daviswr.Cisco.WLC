@@ -5,7 +5,7 @@ class_relationships:
   - Controller(apGroups) 1:MC APGroup(controller)
   - Controller(dhcpPools) 1:MC DHCPPool(controller)
   - Controller(license) 1:MC License(controller)
-  - Controller(vlanInterfaces) 1:MC vlanInterface(controller)
+  - Controller(vlanInterfaces) 1:MC VlanInterface(controller)
   - Controller(wlans) 1:MC WLAN(controller)
   - APGroup(accessPoints) 1:MC AccessPoint(apGroup)
   - AccessPoint(apRadios) 1:MC APRadio(accessPoint)
@@ -121,8 +121,8 @@ classes:
         label: IP Address
         grid_display: true
         order: 5
-        label_width: 80
-        content_width: 80
+        label_width: 90
+        content_width: 90
       # Aruba - wlanAPConfigNetmask
       # Cisco - bsnAPNetmask
       netmask:
@@ -410,8 +410,8 @@ classes:
         short_label: IP
         type: string
         grid_display: true
-        label_width: 80
-        content_width: 80
+        label_width: 90
+        content_width: 90
       # sysExtSwitchLocation
       location:
         label: Location
@@ -482,8 +482,8 @@ classes:
         short_label: End IP
         grid_display: true
         order: 2
-        label_width: 80
-        content_width: 80
+        label_width: 90
+        content_width: 90
       # Cisco - agentDhcpScopeNetwork, agentDhcpScopeNetmask
       network:
         label: Network
@@ -503,8 +503,8 @@ classes:
         short_label: Start IP
         grid_display: true
         order: 1
-        label_width: 80
-        content_width: 80
+        label_width: 90
+        content_width: 90
 
   # Should this extend Products.ZenModel.Software?
   License:
@@ -558,8 +558,8 @@ classes:
         renderer: Zenoss.render.severity
         details_display: false
 
-  # "Interfaces" on Cisco WLC (physical interfaces are "ports")
   # "VLANs" on Aruba
+  # "Interfaces" on Cisco WLC (physical interfaces are "ports")
   # Should this extend Products.ZenModel.IpInterface?
   VlanInterface:
     label: VLAN Interface
@@ -569,14 +569,14 @@ classes:
         type: string
         grid_display: true
         details_display: true
-      # Aruba - ifExtVlanInterfaceIpAddress
-      # Cisco - agentInterfaceIPAddress
+      # Aruba - ifExtVlanInterfaceIpAddress + ifExtVlanInterfaceIpMask
+      # Cisco - agentInterfaceIPAddress + agentInterfaceIPNetmask
       ip:
         label: IP Address
         short_label: IP
         order: 2
-        label_width: 80
-        content_width: 80
+        label_width: 90
+        content_width: 90
       # Aruba does not appear to report the MAC
       # Cisco - agentInterfaceMacAddress
       mac:
@@ -585,19 +585,14 @@ classes:
         order: 4
         label_width: 90
         content_width: 90
-      # Aruba - ifExtVlanInterfaceIpMask
-      # Cisco - agentInterfaceIPNetmask
-      netmask:
-        label: Netmask
-        order: 3
-        label_width: 80
-        content_width: 80
       # Aruba - wlsxIfExtVlanEntry indexes
       # Cisco - agentInterfaceVlanId
       vlan:
         label: VLAN
         type: int
         order: 1
+        label_width: 25
+        content_width: 25
 
   AAAServer:
     label: AAA Server
