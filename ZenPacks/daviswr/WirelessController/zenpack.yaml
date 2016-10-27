@@ -43,6 +43,10 @@ classes:
       # Cisco - Check licenses to determine if HA SKU?
       role:
         type: string
+      tempThresholdLow:
+        type: int
+      tempThresholdHigh:
+        type: int
 
   ArubaController:
     base: [Controller]
@@ -95,10 +99,17 @@ classes:
       location:
         label: Location
         order: 4
+      # Aruba - wlanAPHwVersion
+      # Cisco - cLApEntPhysicalIndex + entPhysicalHardwareRev
+      hwVersion:
+        label: Hardware Version
+        short_label: Hardware
+        type: string
       # Aruba - wlanAPSwVersion
       # Cisco - bsnAPSoftwareVersion
       swVersion:
         label: Software Version
+        short_label: Software
         order: 10
         details_display: false
       # Aruba - wlanAPModelName
@@ -933,6 +944,7 @@ device_classes:
         - daviswr.snmp.ArubaControllerWLAN
       zPythonClass: ZenPacks.daviswr.WirelessController.ArubaController
 
+
   # To avoid conflict with /Network/Cisco/WLC from the Enterprise ZenPacks
   /Network/Cisco/Controller:
     remove: true
@@ -955,3 +967,57 @@ device_classes:
       zWlanServerIgnoreTypes:
         - ldap
         - tacacs
+
+    templates:
+      TemperatureSensor:
+        description: System temperature using AIRESPACE-WIRELESS-MIB
+        targetPythonClass: Products.ZenModel.TemperatureSensor
+        datasources:
+          bsnSensorTemperature:
+            type: SNMP
+            oid: .1.3.6.1.4.1.14179.2.3.1.13
+            datapoints:
+              # Datapoint name for compatibility with
+              # Products.ZenModel.TemperatureSensor class
+              temperature_celsius:
+                description: Current Internal Temperature of the unit in Centigrade
+                rrdtype: GAUGE
+                aliases:
+                  temperature_fahrenheit: "9,*,5,/,32,+"
+        # May not be necessary to due to traps:
+        # bsnTemperatureAlarmLowLimit
+        # bsnTemperatureAlarmHighLimit
+        thresholds:
+          Operating Temperature:
+            type: MinMaxThreshold
+            enabled: true
+            severity: 3
+            eventClass: /HW/Temperature
+            minval: here.tempThresholdLow
+            maxval: here.tempThresholdHigh
+            dsnames:
+              - bsnSensorTemperature_temperature_celsius
+        graphs:
+          Celsius:
+            height: 100
+            width: 500
+            units: deg. C
+            graphpoints:
+              Degrees:
+                dpName: bsnSensorTemperature_temperature_celsius
+                includeThresholds: true
+                lineType: LINE
+                lineWidth: 2
+                # includeThresholds prevents use of colorindex
+                color: 00cc00
+          Fahrenheit:
+            height: 100
+            width: 500
+            units: deg. F
+            graphpoints:
+              Degrees:
+                dpName: bsnSensorTemperature_temperature_celsius
+                lineType: LINE
+                lineWidth: 2
+                rpn: "9,*,5,/,32,+"
+                color: 00cc00

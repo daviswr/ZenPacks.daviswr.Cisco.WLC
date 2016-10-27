@@ -30,6 +30,8 @@ class CiscoControllerDevice(SnmpPlugin):
         '.1.3.6.1.4.1.14179.1.1.1.18.0': 'platformMaxAPs',
         # agentTotalMemory
         '.1.3.6.1.4.1.14179.1.1.5.2.0': 'memory',
+        # bsnOperatingTemperatureEnvironment
+        '.1.3.6.1.4.1.14179.2.3.1.12.0': 'environment',
         # bsnRFMobilityDomainName
         '.1.3.6.1.4.1.14179.2.3.1.17.0': 'mobility',
         })
@@ -68,6 +70,21 @@ class CiscoControllerDevice(SnmpPlugin):
         # Mobility Domain
         if 'mobility' in getdata:
             getdata.update({'mobilityDomains': [getdata['mobility'],]})
+
+        # Operating Temperature threshold
+        if 'environment' in getdata:
+            env_map = dict()
+            # Commercial
+            env_map[1] = {
+                'tempThresholdLow': 0,
+                'tempThresholdHigh': 40,
+                }
+            # Industrial
+            env_map[2] = {
+                'tempThresholdLow': -10,
+                'tempThresholdHigh': 70,
+                }
+            getdata.update(env_map.get(getdata['environment'], dict()))
 
         maps.append(ObjectMap(
             modname='ZenPacks.daviswr.WirelessController.CiscoController',
