@@ -969,6 +969,64 @@ device_classes:
         - tacacs
 
     templates:
+      Device:
+        description: CPU & memory utilization using AIRESPACE-SWITCHING-MIB
+        targetPythonClass: ZenPacks.daviswr.WirelessController.CiscoController
+        datasources:
+          DEFAULTS:
+            type: SNMP
+          agentCurrentCPUUtilization:
+            oid: .1.3.6.1.4.1.14179.1.1.5.1.0
+            datapoints:
+              agentCurrentCPUUtilization:
+                description: Current CPU Load of the switch in percentage
+                rrdtype: GAUGE
+                aliases:
+                  # Compatibility with Zenoss CPU Utilization report
+                  # https://monitoringartist.github.io/community.zenoss.org/docs/DOC-3025.html
+                  cpu_pct: "1,*"
+          agentFreeMemory:
+            oid: .1.3.6.1.4.1.14179.1.1.5.3.0
+            datapoints:
+              agentFreeMemory:
+                description: Free RAM of the switch in Kbytes
+                rrdtype: GAUGE
+                aliases:
+                  freeMemory: "1024,*"
+                  usedMemory: "-1024,*,${here/hw/totalMemory},+"
+                  mem_pct: "-1024,*,${here/hw/totalMemory},+,${here/hw/totalMemory}/"
+        graphs:
+          DEFAULTS:
+            height: 100
+            width: 500
+            miny: 0
+          CPU Utilization:
+            units: percentage
+            maxy: 100
+            graphpoints:
+              Utilization:
+                dpName: agentCurrentCPUUtilization_agentCurrentCPUUtilization
+                lineType: AREA
+                stacked: true
+                colorindex: 0
+          Memory:
+            units: bytes
+            base: true
+            graphpoints:
+              DEFAULTS:
+                dpName: agentFreeMemory_agentFreeMemory
+              Used:
+                lineType: AREA
+                stacked: true
+                rpn: "-1024,*,${here/hw/totalMemory},+"
+                colorindex: 0
+              Free:
+                lineType: AREA
+                stacked: true
+                rpn: "1024,*"
+                color: cccccc
+            
+          
       TemperatureSensor:
         description: System temperature using AIRESPACE-WIRELESS-MIB
         targetPythonClass: Products.ZenModel.TemperatureSensor
@@ -1008,6 +1066,8 @@ device_classes:
                 includeThresholds: true
                 lineType: LINE
                 lineWidth: 2
+                # For correct line color rendering on Zenoss 4.2.5
+                stacked: true
                 # includeThresholds prevents use of colorindex
                 color: 00cc00
           Fahrenheit:
