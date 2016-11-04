@@ -105,6 +105,7 @@ classes:
         label: Hardware Version
         short_label: Hardware
         type: string
+        order: 20
       # Aruba - wlanAPSwVersion
       # Cisco - bsnAPSoftwareVersion
       swVersion:
@@ -174,11 +175,6 @@ classes:
         type: string
         grid_display: false
         details_display: true
-      # wlanAPHwVersion
-      hwVersion:
-        label: Hardware Version
-        short_label: Hardware
-        type: string
       # wlanAPUnprovisioned
       provisioned:
         label: Provisioned
@@ -208,6 +204,7 @@ classes:
       bootVersion:
         label: Boot Version
         short_label: Boot
+        order: 21
       # bsnAPAdminStatus
       enabled:
         label: Enabled
@@ -224,6 +221,7 @@ classes:
       iosVersion:
         label: IOS Version
         short_label: IOS
+        order: 22
       # cLApLinkLatencyEnable
       latency:
         label: Link Latency Measurement
@@ -969,6 +967,7 @@ device_classes:
         - tacacs
 
     templates:
+      # /Network/Cisco/Controller/Device
       Device:
         description: CPU & memory utilization using AIRESPACE-SWITCHING-MIB
         targetPythonClass: ZenPacks.daviswr.WirelessController.CiscoController
@@ -1031,8 +1030,46 @@ device_classes:
                 stacked: true
                 rpn: "1024,*"
                 color: cccccc
-            
-          
+
+      # /Network/Cisco/Controller/AccessPoint
+      AccessPoint:
+        description: Access point link stats from CISCO-LWAPP-AP-MIB
+        targetPythonClass: ZenPacks.daviswr.WirelessController.CiscoAP
+        datasources:
+          DEFAULTS:
+            type: SNMP
+          cLApLinkLatencyStatsCurrent:
+            oid: .1.3.6.1.4.1.9.9.513.1.5.2.1.1
+            datapoints:
+              cLApLinkLatencyStatsCurrent:
+                description: The current Link latency recorded for this Access point
+                rrdtype: GAUGE
+          cLApDataLinkLatencyStatsCurrent:
+            oid: .1.3.6.1.4.1.9.9.513.1.5.2.1.5
+            datapoints:
+              cLApDataLinkLatencyStatsCurrent:
+                description: The current Data Link latency recorded for this Access point
+                rrdtype: GAUGE
+        graphs:
+          DEFAULTS:
+            height: 100
+            width: 500
+            miny: 0
+          Latency:
+            units: milliseconds
+            graphpoints:
+              DEFAULTS:
+                lineType: LINE
+                lineWidth: 2
+              Link:
+                dpName: cLApLinkLatencyStatsCurrent_cLApLinkLatencyStatsCurrent
+                colorindex: 0
+              Data Link:
+                dpName: cLApDataLinkLatencyStatsCurrent_cLApDataLinkLatencyStatsCurrent
+                colorindex: 1
+
+
+      # /Network/Cisco/Controller/TemperatureSensor
       TemperatureSensor:
         description: System temperature using AIRESPACE-WIRELESS-MIB
         targetPythonClass: Products.ZenModel.TemperatureSensor
@@ -1062,9 +1099,10 @@ device_classes:
             dsnames:
               - bsnSensorTemperature_temperature_celsius
         graphs:
-          Celsius:
+          DEFAULTS:
             height: 100
             width: 500
+          Celsius:
             units: deg. C
             graphpoints:
               Degrees:
@@ -1077,8 +1115,6 @@ device_classes:
                 # includeThresholds prevents use of colorindex
                 color: 00cc00
           Fahrenheit:
-            height: 100
-            width: 500
             units: deg. F
             graphpoints:
               Degrees:
