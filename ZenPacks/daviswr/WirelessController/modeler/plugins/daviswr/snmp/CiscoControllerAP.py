@@ -70,6 +70,16 @@ class CiscoControllerAP(SnmpPlugin):
         '.1': 'latency',
         }
 
+    cLApEntry = {
+        # cLApEntPhysicalIndex
+        '.4': 'ent_idx',
+        }
+
+    entPhysicalEntry = {
+        # entPhysicalHardwareRev
+        '.8': 'hwVersion',
+        }
+
     clcCdpApCacheEntry = {
         # clcCdpApCacheNeighName
         '.6': 'neighborName',
@@ -126,6 +136,16 @@ class CiscoControllerAP(SnmpPlugin):
             cLApLinkLatencyEntry
             ),
         GetTableMap(
+            'cLApTable',
+            '.1.3.6.1.4.1.9.9.513.1.1.1.1',
+            cLApEntry,
+            ),
+        GetTableMap(
+            'entPhysicalTable',
+            '.1.3.6.1.2.1.47.1.1.1.1',
+            entPhysicalEntry
+            ),
+        GetTableMap(
             'clcCdpApCacheTable',
             '.1.3.6.1.4.1.9.9.623.1.3.1.1',
             clcCdpApCacheEntry
@@ -165,6 +185,12 @@ class CiscoControllerAP(SnmpPlugin):
             'cLApLinkLatencyTable has %s entries',
             len(cLApLinkLatencyTable)
             )
+
+        cLApTable = tabledata.get('cLApTable')
+        log.debug('cLApTable has %s entries', len(cLApTable))
+
+        entPhysicalTable = tabledata.get('entPhysicalTable')
+        log.debug('entPhysicalTable has %s entries', len(entPhysicalTable))
 
         clcCdpApCacheTable = tabledata.get('clcCdpApCacheTable')
         log.debug(
@@ -269,8 +295,9 @@ class CiscoControllerAP(SnmpPlugin):
 
             log.debug('Found AP: %s in group %s', name, group)
 
-            # Merge latency table, same indexing
+            # Merge other tables with same indexing
             row.update(cLApLinkLatencyTable.get(snmpindex, dict()))
+            row.update(cLApTable.get(snmpindex, dict()))
 
             # Clean up some values
             attr_map = dict()
@@ -307,6 +334,10 @@ class CiscoControllerAP(SnmpPlugin):
 
             if model:
                 row['model'] = row['model'].strip(' ')
+
+            # Entity hardware version
+            entity = entPhysicalTable.get(str(row.get('ent_idx', 0)), dict())
+            row['hwVersion'] = entity.get('hwVersion', None)
 
             # AP CDP neighbor
             cdpindex = '{}.1'.format(snmpindex)
