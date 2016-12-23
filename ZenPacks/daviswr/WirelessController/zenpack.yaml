@@ -1020,14 +1020,12 @@ device_classes:
             graphpoints:
               DEFAULTS:
                 dpName: agentFreeMemory_agentFreeMemory
-              Used:
                 lineType: AREA
                 stacked: true
+              Used:
                 rpn: "-1024,*,${here/hw/totalMemory},+"
                 colorindex: 0
               Free:
-                lineType: AREA
-                stacked: true
                 rpn: "1024,*"
                 color: cccccc
 
@@ -1038,24 +1036,24 @@ device_classes:
         datasources:
           DEFAULTS:
             type: SNMP
-          cLApLinkLatencyStatsCurrent:
-            oid: .1.3.6.1.4.1.9.9.513.1.5.2.1.1
-            datapoints:
-              cLApLinkLatencyStatsCurrent:
-                description: The current Link latency recorded for this Access point
-                rrdtype: GAUGE
           cLApDataLinkLatencyStatsCurrent:
             oid: .1.3.6.1.4.1.9.9.513.1.5.2.1.5
             datapoints:
               cLApDataLinkLatencyStatsCurrent:
                 description: The current Data Link latency recorded for this Access point
                 rrdtype: GAUGE
+          cLApLinkLatencyStatsCurrent:
+            oid: .1.3.6.1.4.1.9.9.513.1.5.2.1.1
+            datapoints:
+              cLApLinkLatencyStatsCurrent:
+                description: The current Link latency recorded for this Access point
+                rrdtype: GAUGE
         graphs:
           DEFAULTS:
             height: 100
             width: 500
-            miny: 0
           Latency:
+            miny: 0
             units: milliseconds
             graphpoints:
               DEFAULTS:
@@ -1068,6 +1066,180 @@ device_classes:
                 dpName: cLApDataLinkLatencyStatsCurrent_cLApDataLinkLatencyStatsCurrent
                 colorindex: 1
 
+      # /Network/Cisco/Controller/AccessPointRadio
+      AccessPointRadio:
+        description: Radio stats from AIRESPACE-WIRELESS-MIB
+        targetPythonClass: ZenPacks.daviswr.WirelessController.CiscoWLAN
+        datasources:
+          DEFAULTS:
+            type: SNMP
+          bsnAPIfCoverageProfileState:
+            oid: .1.3.6.1.4.1.14179.2.2.16.1.24
+            datapoints:
+              bsnAPIfCoverageProfileState:
+                description: This is a total measurement of the client coverage at this Airespace AP
+                rrdtype: GAUGE
+          bsnAPIfInterferenceProfileState:
+            oid: .1.3.6.1.4.1.14179.2.2.16.1.2
+            datapoints:
+              bsnAPIfInterferenceProfileState:
+                description: This is a total measurement of the interference present at this Airespace AP
+                rrdtype: GAUGE
+          bsnAPIfLoadChannelUtilization:
+            oid: .1.3.6.1.4.1.14179.2.2.13.1.3
+            datapoints:
+              bsnAPIfLoadChannelUtilization:
+                description: Channel Utilization
+                rrdtype: GAUGE
+          bsnAPIfLoadNumOfClients:
+            oid: .1.3.6.1.4.1.14179.2.2.13.1.4
+            datapoints:
+              bsnAPIfLoadNumOfClients:
+                description: This is the number of clients attached to this Airespace AP
+                rrdtype: GAUGE
+          bsnAPIfLoadProfileState:
+            oid: .1.3.6.1.4.1.14179.2.2.16.1.1
+            datapoints:
+              bsnAPIfLoadProfileState:
+                description: This is a total measurement of the business of this Airespace AP
+                rrdtype: GAUGE
+          bsnAPIfLoadRxUtilization:
+            oid: .1.3.6.1.4.1.14179.2.2.13.1.1
+            datapoints:
+              bsnAPIfLoadRxUtilization:
+                description: This is the percentage of time the Airespace AP receiver is busy operating on packets
+                rrdtype: GAUGE
+          bsnAPIfLoadTxUtilization:
+            oid: .1.3.6.1.4.1.14179.2.2.13.1.2
+            datapoints:
+              bsnAPIfLoadTxUtilization:
+                description: This is the percentage of time the Airespace AP transmitter is busy operating on packets
+                rrdtype: GAUGE
+          bsnAPIfNoiseProfileState:
+            oid: .1.3.6.1.4.1.14179.2.2.16.1.3
+            datapoints:
+              bsnAPIfNoiseProfileState:
+                description: This is a total measurement of the noise present at this Airespace AP
+                rrdtype: GAUGE
+          bsnApIfNoOfUsers:
+            oid: .1.3.6.1.4.1.14179.2.2.2.1.15
+            datapoints:
+              bsnApIfNoOfUsers:
+                description: No. of Users associated with this radio
+                rrdtype: GAUGE
+          bsnAPIfNumberOfVaps:
+            oid: .1.3.6.1.4.1.14179.2.2.2.1.11
+            datapoints:
+              bsnAPIfNumberOfVaps:
+                description: Number of WLANs currently active on this AP Interface
+                rrdtype: GAUGE
+          bsnAPIfOperStatus:
+            oid: .1.3.6.1.4.1.14179.2.2.2.1.12
+            datapoints:
+              bsnAPIfOperStatus:
+                description: Operational status of the interface
+                rrdtype: GAUGE
+          bsnAPIfPhyTxPowerLevel:
+            oid: .1.3.6.1.4.1.14179.2.2.2.1.6
+            datapoints:
+              bsnAPIfPhyTxPowerLevel:
+                description: The TxPowerLevel currently being used to transmit data
+                rrdtype: GAUGE
+          bsnAPIfPoorSNRClients:
+            oid: .1.3.6.1.4.1.14179.2.2.13.1.24
+            datapoints:
+              bsnAPIfPoorSNRClients:
+                description: This is the number of clients with poor SNR attached to this Airespace AP
+                rrdtype: GAUGE
+        thresholds:
+          DEFAULTS:
+            enabled: true
+            severity: 3
+            # TBD
+            eventClass: /Net/Link
+          Coverage:
+            type: MinMaxThreshold
+            minval: 1
+            maxval: 1
+            dsnames:
+              - bsnAPIfCoverageProfileState_bsnAPIfCoverageProfileState
+          Interference:
+            type: MinMaxThreshold
+            minval: 1
+            maxval: 1
+            dsnames:
+              - bsnAPIfInterferenceProfileState_bsnAPIfInterferenceProfileState
+          Load:
+            type: MinMaxThreshold
+            minval: 1
+            maxval: 1
+            dsnames:
+              - bsnAPIfLoadProfileState_bsnAPIfLoadProfileState
+          Noise:
+            type: MinMaxThreshold
+            minval: 1
+            maxval: 1
+            dsnames:
+              - bsnAPIfNoiseProfileState_bsnAPIfNoiseProfileState
+          Operational Status:
+            type: ValueChangeThreshold
+            severity: 2
+            # Subclass TDB
+            eventClass: /Status/Perf
+            dsnames:
+              - bsnAPIfOperStatus_bsnAPIfOperStatus
+        graphs:
+          DEFAULTS:
+            height: 100
+            width: 500
+            miny: 0
+          Associations:
+            units: clients
+            graphpoints:
+              Clients:
+                dpName: bsnAPIfLoadNumOfClients_bsnAPIfLoadNumOfClients
+                lineType: AREA
+                colorindex: 0
+              Poor-SNR Clients:
+                dpName: bsnAPIfPoorSNRClients_bsnAPIfPoorSNRClients
+                lineType: LINE
+                lineWidth: 1
+                colorindex: 1
+          Load:
+            maxy: 100
+            units: percentage
+            graphpoints:
+              Receive:
+                dpName: bsnAPIfLoadRxUtilization_bsnAPIfLoadRxUtilization
+                lineType: AREA
+                colorindex: 0
+              Transmit:
+                dpName: bsnAPIfLoadTxUtilization_bsnAPIfLoadTxUtilization
+                lineType: LINE
+                lineWidth: 1
+                colorindex: 1
+          Channel Utilization:
+            maxy: 100
+            units: percentage
+            graphpoints:
+              Clients:
+                dpName: bsnAPIfLoadChannelUtilization_bsnAPIfLoadChannelUtilization
+                lineType: AREA
+                colorindex: 0
+          WLANs:
+            units: WLANs
+            graphpoints:
+              Clients:
+                dpName: bsnAPIfNumberOfVaps_bsnAPIfNumberOfVaps
+                lineType: AREA
+                colorindex: 0
+          Power Level:
+            units: percentage
+            graphpoints:
+              Clients:
+                dpName: bsnAPIfPhyTxPowerLevel_bsnAPIfPhyTxPowerLevel
+                lineType: AREA
+                colorindex: 0
 
       # /Network/Cisco/Controller/TemperatureSensor
       TemperatureSensor:
@@ -1123,3 +1295,30 @@ device_classes:
                 lineWidth: 2
                 rpn: "9,*,5,/,32,+"
                 color: 00cc00
+
+      # /Network/Cisco/Controller/WirelessLAN
+      WirelessLAN:
+        description: Association count from AIRESPACE-WIRELESS-MIB
+        targetPythonClass: ZenPacks.daviswr.WirelessController.CiscoWLAN
+        datasources:
+          DEFAULTS:
+            type: SNMP
+          bsnDot11EssNumberOfMobileStations:
+            oid: .1.3.6.1.4.1.14179.2.1.1.1.38
+            datapoints:
+              bsnDot11EssNumberOfMobileStations:
+                description: No. of Mobile Stations currently associated with the WLAN
+                rrdtype: GAUGE
+        graphs:
+          DEFAULTS:
+            height: 100
+            width: 500
+          Associations:
+            miny: 0
+            units: clients
+            graphpoints:
+              DEFAULTS:
+                lineType: AREA
+              Clients:
+                dpName: bsnDot11EssNumberOfMobileStations_bsnDot11EssNumberOfMobileStations
+                colorindex: 0
