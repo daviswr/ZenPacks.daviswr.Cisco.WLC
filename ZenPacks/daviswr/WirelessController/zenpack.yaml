@@ -1222,21 +1222,20 @@ device_classes:
             maxy: 100
             units: percentage
             graphpoints:
-              Clients:
+              Utilization:
                 dpName: bsnAPIfLoadChannelUtilization_bsnAPIfLoadChannelUtilization
                 lineType: AREA
                 colorindex: 0
           WLANs:
             units: WLANs
             graphpoints:
-              Clients:
+              WLANs:
                 dpName: bsnAPIfNumberOfVaps_bsnAPIfNumberOfVaps
                 lineType: AREA
                 colorindex: 0
           Power Level:
-            units: percentage
             graphpoints:
-              Clients:
+              Level:
                 dpName: bsnAPIfPhyTxPowerLevel_bsnAPIfPhyTxPowerLevel
                 lineType: AREA
                 colorindex: 0
