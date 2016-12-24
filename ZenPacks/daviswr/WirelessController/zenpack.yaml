@@ -77,7 +77,7 @@ classes:
     short_label: Cisco IOS WLC
       
   AccessPoint:
-    label: Access Point
+    label: Abstract AP
     short_label: AP
     relationships:
       apRadios:
@@ -270,7 +270,7 @@ classes:
         content_width: 300
 
   APRadio:
-    label: Access Point Radio
+    label: Abstract AP Radio
     short_label: Radio
     relationships:
       accessPoint:
@@ -741,7 +741,7 @@ classes:
     short_label: Windows
 
   WLAN:
-    label: Wireless LAN
+    label: Abstract WLAN
     short_label: WLAN
     properties:
       DEFAULTS:
