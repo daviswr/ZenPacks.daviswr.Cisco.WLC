@@ -969,7 +969,7 @@ device_classes:
     templates:
       # /Network/Cisco/Controller/Device
       Device:
-        description: CPU & memory utilization using AIRESPACE-SWITCHING-MIB
+        description: CPU & memory utilization from AIRESPACE-SWITCHING-MIB
         targetPythonClass: ZenPacks.daviswr.WirelessController.CiscoController
         datasources:
           DEFAULTS:
@@ -1191,9 +1191,177 @@ device_classes:
                 lineWidth: 2
                 colorindex: 0
 
+      # /Network/Cisco/Controller/RADIUSAccountingServer
+      RADIUSAccountingServer:
+        description: RADIUS accounting stats from AIRESPACE-WIRELESS-MIB
+        targetPythonClass: ZenPacks.daviswr.WirelessController.RadAcctServer
+        datasources:
+          DEFAULTS:
+            type: SNMP
+          bsnRadiusAccClientRoundTripTime:
+            oid: .1.3.6.1.4.1.14179.2.5.4.1.6
+            datapoints:
+              bsnRadiusAccClientRoundTripTime:
+                description: The time interval between the most recent Accounting-Response and the Accounting-Request that matched it
+                rrdtype: GAUGE
+          bsnRadiusAccClientRequests:
+            oid: .1.3.6.1.4.1.14179.2.5.4.1.7
+            datapoints:
+              bsnRadiusAccClientRequests:
+                description: The number of RADIUS Accounting-Request packets sent. This does not include retransmissions.
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAccClientRetransmissions:
+            oid: .1.3.6.1.4.1.14179.2.5.4.1.8
+            datapoints:
+              bsnRadiusAccClientRetransmissions:
+                description: The number of RADIUS Accounting-Request packets retransmitted
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAccClientResponses:
+            oid: .1.3.6.1.4.1.14179.2.5.4.1.9
+            datapoints:
+              bsnRadiusAccClientResponses:
+                description: The number of RADIUS packets received on the accounting port
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAccClientMalformedResponses:
+            oid: .1.3.6.1.4.1.14179.2.5.4.1.10
+            datapoints:
+              bsnRadiusAccClientMalformedResponses:
+                description: The number of malformed RADIUS Accounting-Response packets received. Bad authenticators and unknown types are not included
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAccClientBadAuthenticators:
+            oid: .1.3.6.1.4.1.14179.2.5.4.1.11
+            datapoints:
+              bsnRadiusAccClientBadAuthenticators:
+                description: The number of RADIUS Accounting-Response packets which contained invalid authenticators received
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAccClientPendingRequests:
+            oid: .1.3.6.1.4.1.14179.2.5.4.1.12
+            datapoints:
+              bsnRadiusAccClientPendingRequests:
+                description: The number of RADIUS Accounting-Request packets sent that have not yet timed out or received a response.
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAccClientTimeouts:
+            oid: .1.3.6.1.4.1.14179.2.5.4.1.13
+            datapoints:
+              bsnRadiusAccClientTimeouts:
+                description: The number of accounting timeouts to this server.
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAccClientUnknownTypes:
+            oid: .1.3.6.1.4.1.14179.2.5.4.1.14
+            datapoints:
+              bsnRadiusAccClientUnknownTypes:
+                description: The number of RADIUS packets of unknown type which were received
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAccClientPacketsDropped:
+            oid: .1.3.6.1.4.1.14179.2.5.4.1.34
+            datapoints:
+              bsnRadiusAccClientPacketsDropped:
+                description: The number of RADIUS packets which were received and dropped for some other reason.
+                rrdtype: DERIVE
+                rrdmin: 0
+
+      # /Network/Cisco/Controller/RADIUSAuthenticationServer
+      RADIUSAuthenticationServer:
+        description: RADIUS authentication stats from AIRESPACE-WIRELESS-MIB
+        targetPythonClass: ZenPacks.daviswr.WirelessController.RadAuthServer
+        datasources:
+          DEFAULTS:
+            type: SNMP
+          bsnRadiusAuthClientRoundTripTime:
+            oid: .1.3.6.1.4.1.14179.2.5.3.1.6
+            datapoints:
+              bsnRadiusAuthClientRoundTripTime:
+                description: The time interval (in hundredths of a second) between the most recent Access-Reply/Access-Challenge and the Access-Request that matched it
+                rrdtype: GAUGE
+          bsnRadiusAuthClientAccessRequests:
+            oid: .1.3.6.1.4.1.14179.2.5.3.1.7
+            datapoints:
+              bsnRadiusAuthClientAccessRequests:
+                description: The number of RADIUS Access-Request packets sent. This does not include retransmissions.
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAuthClientAccessRetransmissions:
+            oid: .1.3.6.1.4.1.14179.2.5.3.1.8
+            datapoints:
+              bsnRadiusAuthClientAccessRetransmissions:
+                description: The number of RADIUS Access-Request packets retransmitted
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAuthClientAccessAccepts:
+            oid: .1.3.6.1.4.1.14179.2.5.3.1.9
+            datapoints:
+              bsnRadiusAuthClientAccessAccepts:
+                description: The number of RADIUS Access-Accept packets (valid or invalid) received
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAuthClientAccessRejects:
+            oid: .1.3.6.1.4.1.14179.2.5.3.1.10
+            datapoints:
+              bsnRadiusAuthClientAccessRejects:
+                description: The number of RADIUS Access-Reject packets (valid or invalid) received
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAuthClientAccessChallenges:
+            oid: .1.3.6.1.4.1.14179.2.5.3.1.11
+            datapoints:
+              bsnRadiusAuthClientAccessChallenges:
+                description: The number of RADIUS Access-Challenge packets (valid or invalid)
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAuthClientMalformedAccessResponses:
+            oid: .1.3.6.1.4.1.14179.2.5.3.1.12
+            datapoints:
+              bsnRadiusAuthClientMalformedAccessResponses:
+                description: The number of malformed RADIUS Access-Response packets received. Bad authenticators or Signature attributes or unknown types are not included
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAuthClientBadAuthenticators:
+            oid: .1.3.6.1.4.1.14179.2.5.3.1.13
+            datapoints:
+              bsnRadiusAuthClientBadAuthenticators:
+                description: The number of RADIUS Access-Response packets containing invalid authenticators or Signature attributes received
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAuthClientPendingRequests:
+            oid: .1.3.6.1.4.1.14179.2.5.3.1.14
+            datapoints:
+              bsnRadiusAuthClientPendingRequests:
+                description: The number of RADIUS Access-Request packets destined for this server that have not yet timed out or received a response
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAuthClientTimeouts:
+            oid: .1.3.6.1.4.1.14179.2.5.3.1.15
+            datapoints:
+              bsnRadiusAuthClientTimeouts:
+                description: The number of authentication timeouts to this server.
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAuthClientUnknownTypes:
+            oid: .1.3.6.1.4.1.14179.2.5.3.1.16
+            datapoints:
+              bsnRadiusAuthClientUnknownTypes:
+                description: The number of RADIUS packets of unknown type which were received
+                rrdtype: DERIVE
+                rrdmin: 0
+          bsnRadiusAuthClientPacketsDropped:
+            oid: .1.3.6.1.4.1.14179.2.5.3.1.36
+            datapoints:
+              bsnRadiusAuthClientPacketsDropped:
+                description: The number of RADIUS packets of which were received and dropped for some other reason.
+                rrdtype: DERIVE
+                rrdmin: 0
+
       # /Network/Cisco/Controller/TemperatureSensor
       TemperatureSensor:
-        description: System temperature using AIRESPACE-WIRELESS-MIB
+        description: System temperature from AIRESPACE-WIRELESS-MIB
         targetPythonClass: Products.ZenModel.TemperatureSensor
         datasources:
           bsnSensorTemperature:
