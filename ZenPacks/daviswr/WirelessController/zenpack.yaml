@@ -1327,7 +1327,7 @@ device_classes:
           Pending Requests:
             units: requests
             graphpoints:
-              Time:
+              Pending:
                 dpName: bsnRadiusAccClientPendingRequests_bsnRadiusAccClientPendingRequests
                 lineType: AREA
                 colorindex: 0
@@ -1492,7 +1492,7 @@ device_classes:
           Pending Requests:
             units: requests
             graphpoints:
-              Time:
+              Pending:
                 dpName: bsnRadiusAuthClientPendingRequests_bsnRadiusAuthClientPendingRequests
                 lineType: AREA
                 colorindex: 0
