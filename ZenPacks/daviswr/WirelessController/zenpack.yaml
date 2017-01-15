@@ -1266,6 +1266,71 @@ device_classes:
                 description: The number of RADIUS packets which were received and dropped for some other reason.
                 rrdtype: DERIVE
                 rrdmin: 0
+        graphs:
+          DEFAULTS:
+            height: 100
+            width: 500
+            miny: 0
+          Round Trip Time:
+            units: milliseconds
+            graphpoints:
+              Time:
+                dpName: bsnRadiusAccClientRoundTripTime_bsnRadiusAccClientRoundTripTime
+                lineType: AREA
+                colorindex: 0
+          Activity:
+            units: requests/sec
+            graphpoints:
+              Requests:
+                dpName: bsnRadiusAccClientRequests_bsnRadiusAccClientRequests
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 0
+              Retransmissions:
+                dpName: bsnRadiusAccClientRetransmissions_bsnRadiusAccClientRetransmissions
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 1
+              Responses:
+                dpName: bsnRadiusAccClientResponses_bsnRadiusAccClientResponses
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 2
+          Errors:
+            units: requests/sec
+            graphpoints:
+              Malformed:
+                dpName: bsnRadiusAccClientMalformedResponses_bsnRadiusAccClientMalformedResponses
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 0
+              Bad Auth:
+                dpName: bsnRadiusAccClientBadAuthenticators_bsnRadiusAccClientBadAuthenticators
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 1
+              Timeout:
+                dpName: bsnRadiusAccClientTimeouts_bsnRadiusAccClientTimeouts
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 2
+              Unknown:
+                dpName: bsnRadiusAccClientUnknownTypes_bsnRadiusAccClientUnknownTypes
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 3
+              Dropped:
+                dpName: bsnRadiusAccClientPacketsDropped_bsnRadiusAccClientPacketsDropped
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 4
+          Pending Requests:
+            units: requests
+            graphpoints:
+              Time:
+                dpName: bsnRadiusAccClientPendingRequests_bsnRadiusAccClientPendingRequests
+                lineType: AREA
+                colorindex: 0
 
       # /Network/Cisco/Controller/RADIUSAuthenticationServer
       RADIUSAuthenticationServer:
@@ -1356,6 +1421,81 @@ device_classes:
                 description: The number of RADIUS packets of which were received and dropped for some other reason.
                 rrdtype: DERIVE
                 rrdmin: 0
+        graphs:
+          DEFAULTS:
+            height: 100
+            width: 500
+            miny: 0
+          Round Trip Time:
+            units: milliseconds
+            graphpoints:
+              Time:
+                dpName: bsnRadiusAuthClientRoundTripTime_bsnRadiusAuthClientRoundTripTime
+                lineType: AREA
+                colorindex: 0
+          Activity:
+            units: requests/sec
+            graphpoints:
+              Requests:
+                dpName: bsnRadiusAuthClientAccessRequests_bsnRadiusAuthClientAccessRequests
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 0
+              Retransmissions:
+                dpName: bsnRadiusAuthClientAccessRetransmissions_bsnRadiusAuthClientAccessRetransmissions
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 1
+              Challenges:
+                dpName: bsnRadiusAuthClientAccessChallenges_bsnRadiusAuthClientAccessChallenges
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 2
+              Accept:
+                dpName: bsnRadiusAuthClientAccessAccepts_bsnRadiusAuthClientAccessAccepts
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 3
+              Reject:
+                dpName: bsnRadiusAuthClientAccessRejects_bsnRadiusAuthClientAccessRejects
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 4
+          Errors:
+            units: requests/sec
+            graphpoints:
+              Malformed:
+                dpName: bsnRadiusAuthClientMalformedAccessResponses_bsnRadiusAuthClientMalformedAccessResponses
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 0
+              Bad Auth:
+                dpName: bsnRadiusAuthClientBadAuthenticators_bsnRadiusAuthClientBadAuthenticators
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 1
+              Timeout:
+                dpName: bsnRadiusAuthClientTimeouts_bsnRadiusAuthClientTimeouts
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 2
+              Unknown:
+                dpName: bsnRadiusAuthClientUnknownTypes_bsnRadiusAuthClientUnknownTypes
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 3
+              Dropped:
+                dpName: bsnRadiusAuthClientPacketsDropped_bsnRadiusAuthClientPacketsDropped
+                lineType: LINE
+                lineWidth: 2
+                colorindex: 4
+          Pending Requests:
+            units: requests
+            graphpoints:
+              Time:
+                dpName: bsnRadiusAuthClientPendingRequests_bsnRadiusAuthClientPendingRequests
+                lineType: AREA
+                colorindex: 0
 
       # /Network/Cisco/Controller/TemperatureSensor
       TemperatureSensor:
