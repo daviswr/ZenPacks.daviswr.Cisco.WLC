@@ -60,6 +60,14 @@ class CiscoControllerDHCPPool(SnmpPlugin):
             ),
         )
 
+    def condition(self, device, log):
+        ignore = False
+        model = str(device.hw.getModelName())
+        if model.find('VM') > -1:
+            log.info('Cisco Virtual WLC does not support DHCP pools, skipping')
+            ignore = True
+        return not ignore
+
     def process(self, device, results, log):
         """collect snmp information from this device"""
         log.info('processing %s for device %s', self.name(), device.id)
