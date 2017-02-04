@@ -34,7 +34,7 @@ class CiscoControllerTemperature(SnmpPlugin):
     def condition(self, device, log):
         ignore = False
         model = str(device.hw.getModelName())
-        if model.find('VM') > -1 or model.find('WiSM') > -1:
+        if model.find('VM') > -1 or model.find('WISM') > -1:
             log.info('Cisco vWLC and WiSM lack temperature sensors, skipping')
             ignore = True
         return not ignore
@@ -78,7 +78,7 @@ class CiscoControllerTemperature(SnmpPlugin):
             if 'temperature_celsius' in row:
                 # The vWLC & WiSM lack temperature sensors, return 5000 deg. C
                 # condition() above should catch this if CiscoControllerDevice
-                # model has ran before
+                # modeler has ran before
                 if 5000 == row['temperature_celsius']:
                     log.debug(
                         'Cisco vWLC or WiSM detected, skipping temperature sensor model'
