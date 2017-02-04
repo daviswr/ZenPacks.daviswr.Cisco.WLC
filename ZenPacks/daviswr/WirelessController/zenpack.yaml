@@ -53,9 +53,9 @@ classes:
     label: Aruba Mobility Controller
     short_label: Aruba Controller
     properties:
-      isLocal:
+      local:
         type: boolean
-      isMaster:
+      master:
         type: boolean
       # wlsxSwitchMasterIp
       masterIP:
