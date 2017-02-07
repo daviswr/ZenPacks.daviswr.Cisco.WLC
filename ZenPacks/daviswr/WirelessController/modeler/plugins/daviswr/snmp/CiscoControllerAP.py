@@ -335,6 +335,9 @@ class CiscoControllerAP(SnmpPlugin):
             if model:
                 row['model'] = row['model'].strip(' ')
 
+            if 'iosVersion' in row:
+                row['iosVersion'] = row['iosVersion'].strip('$')
+
             # Entity hardware version
             entity = entPhysicalTable.get(str(row.get('ent_idx', 0)), dict())
             row['hwVersion'] = entity.get('hwVersion', None)
