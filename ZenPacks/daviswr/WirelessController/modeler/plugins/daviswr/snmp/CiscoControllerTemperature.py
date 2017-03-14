@@ -32,6 +32,7 @@ class CiscoControllerTemperature(SnmpPlugin):
         )
 
     def condition(self, device, log):
+        """determine if this modeler should run"""
         ignore = False
         model = str(device.hw.getModelName())
         if model.find('VM') > -1 or model.find('WISM') > -1:
@@ -62,7 +63,10 @@ class CiscoControllerTemperature(SnmpPlugin):
         for snmpindex in bsnSensorTemperature:
             row = bsnSensorTemperature[snmpindex]
             num = int(snmpindex.replace('.', '')) + 1
-            name = 'Temperature Sensor {}'.format(num)
+            if len(bsnSensorTemperature) == 1:
+                name = 'Internal Temperature'
+            else:
+                name = 'Temperature Sensor {}'.format(num)
 
             # Clean up attributes
             attr_map = dict()
