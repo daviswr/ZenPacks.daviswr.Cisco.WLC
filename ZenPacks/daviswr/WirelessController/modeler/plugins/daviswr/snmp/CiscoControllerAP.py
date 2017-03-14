@@ -117,6 +117,12 @@ class CiscoControllerAP(SnmpPlugin):
         '.4': '11n',
         # cLAp11nChannelBandwidth
         '.5': 'width',
+        # No entry in CISCO-LWAPP-AP-MIB
+        # cLAp11nChannelBandwidth only has values up to 40 MHz
+        '.23': 'width_new',
+        # No entry in CISCO-LWAPP-AP-MIB
+        # cLApExtensionChannel only works for 40 MHz, not 80+
+        '.24': 'ext_channel',
         }
 
     snmpGetTableMaps = (
@@ -414,13 +420,17 @@ class CiscoControllerAP(SnmpPlugin):
                 99: 'Not Applicable',
                 }
 
+            # Assuming cLApDot11IfEntry.24's lower values are
+            # compatible with cLAp11nChannelBandwidth
             attr_map['width'] = {
                 1: '5 MHz',
                 2: '10 MHz',
                 3: '20 MHz',
                 4: '40 MHz',
-                # CISCO-LWAPP-AP-MIB does not have values for 80- or 160-MHz
+                5: '80 MHz',
                 }
+
+            attr_map['width_new'] = attr_map['width']
 
             for attr in attr_map:
                 if attr in row:
@@ -435,11 +445,25 @@ class CiscoControllerAP(SnmpPlugin):
             if row.get('11n'):
                 row['dot11'] += 'n'
             else:
+                # Assuming there aren't any more strictly-11b radios out there
                 dot11_map = {
                     '2.4 GHz': 'g',
                     '5 GHz': 'a',
                     }
                 row['dot11'] += dot11_map.get(row.get('band'), '')
+
+            # Extension Channels
+            if len(row.get('ext_channel', '')) > 0:
+                row['channel'] = '{0},{1}'.format(
+                    row['channel'],
+                    row['ext_channel']
+                    )
+            if 'width_new' in row:
+                row['width'] = row['width_new']
+            # This assumption will not work when 11ax is released
+            # Still no way to detect 11ac (VHT) with a 20- or 40-MHz channel
+            if '80 MHz' == row['width'] and '802.11ac' != row['dot11']:
+                row['dot11'] = '802.11ac'
 
             log.debug(
                 'Found radio %s for AP index %s',

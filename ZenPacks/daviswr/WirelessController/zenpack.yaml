@@ -299,7 +299,6 @@ classes:
       channel:
         label: Channel Number
         short_label: Channel
-        type: int
         grid_display: true
         order: 3
         label_width: 40
