@@ -61,6 +61,7 @@ class CiscoControllerDHCPPool(SnmpPlugin):
         )
 
     def condition(self, device, log):
+        """determine if this modeler should run"""
         ignore = False
         model = str(device.hw.getModelName())
         if model.find('VM') > -1:
