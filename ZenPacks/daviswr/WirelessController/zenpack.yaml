@@ -4,7 +4,7 @@ class_relationships:
   - Controller(aaaServers) 1:MC AAAServer(controller)
   - Controller(apGroups) 1:MC APGroup(controller)
   - Controller(dhcpPools) 1:MC DHCPPool(controller)
-  - Controller(license) 1:MC License(controller)
+  - Controller(licenses) 1:MC License(controller)
   - Controller(vlanInterfaces) 1:MC VlanInterface(controller)
   - Controller(wlans) 1:MC WLAN(controller)
   - APGroup(accessPoints) 1:MC AccessPoint(apGroup)
@@ -12,8 +12,6 @@ class_relationships:
   # Aruba-specific
   - ArubaController(arubaRemoteController) 1:MC ArubaRemoteController(controller)
   # Use stock component classes for CPU, fan, and power
-  # Non-containing relationships
-  #- WLAN(aaaServers) M:M AAAServer(wlans)
 
 
 classes:
@@ -29,7 +27,7 @@ classes:
       # Cisco - entPhysicalHardwareRev.1
       hwVersion:
         type: string
-      # Set by license modeler
+      # Set by license modeler?
       maxAPs:
         type: int
       # Aruba - mobilityDomainName ("default" has no Name entry)
@@ -533,13 +531,6 @@ classes:
       expiration:
         label: Expiration Date
         short_label: Expiration
-      # Aruba - licenseService (colon split)
-      # clmgmtLicenseFeatureName
-      feature:
-        label: Feature
-        grid_display: true
-      status:
-        label: Status
       # Aruba - sysExtLicenseFlags
       #         E - enabled
       #         A - auto-generated
@@ -551,6 +542,8 @@ classes:
       #         4 - expired, in use
       #         5 - expired, not in use
       #         6 - usage count consumed
+      status:
+        label: Status
       statusSev:
         label: Status
         enum:
@@ -564,6 +557,7 @@ classes:
           5: "debug"
           6: "critical"
         renderer: Zenoss.render.severity
+        grid_display: true
         details_display: false
 
   # "VLANs" on Aruba
