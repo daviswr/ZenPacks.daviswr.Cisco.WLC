@@ -1,6 +1,7 @@
 name: ZenPacks.daviswr.WirelessController
 
 class_relationships:
+  # May need more vendor-specific relationships for aesthetic purposes
   - Controller(aaaServers) 1:MC AAAServer(controller)
   - Controller(apGroups) 1:MC APGroup(controller)
   - Controller(dhcpPools) 1:MC DHCPPool(controller)
@@ -75,8 +76,7 @@ classes:
     short_label: Cisco IOS WLC
       
   AccessPoint:
-    label: Abstract AP
-    short_label: AP
+    label: AP
     relationships:
       apRadios:
         grid_display: false
@@ -169,17 +169,15 @@ classes:
     label: Access Point
     short_label: AP
     properties:
-      DEFAULTS:
-        type: string
-        grid_display: false
-        details_display: true
       # wlanAPUnprovisioned
       provisioned:
         label: Provisioned
         type: boolean
-        # Modeler will have invert the value
+        # Modeler will have inverted the value
         enum: {true: "clear", false: "critical"}
         renderer: Zenoss.render.severity
+        grid_display: false
+        details_display: true
         label_width: 25
         content_width: 25
         details_display: false
@@ -194,14 +192,13 @@ classes:
     label: Access Point
     short_label: AP
     properties:
-      DEFAULTS:
-        type: string
-        grid_display: false
-        details_display: true
-      # bsnAPBootVersion
+      # Local defaults override inherited ones in ZPL 2.x
       bootVersion:
         label: Boot Version
         short_label: Boot
+        type: string
+        grid_display: false
+        details_display: true
         order: 21
       # bsnAPAdminStatus
       enabled:
@@ -219,12 +216,15 @@ classes:
       iosVersion:
         label: IOS Version
         short_label: IOS
+        type: string
+        grid_display: false
+        details_display: true
         order: 22
       # cLApLinkLatencyEnable
       latency:
         label: Link Latency Measurement
         short_label: Latency
-        type: bool
+        type: boolean
         enum: {true: "clear", false: "critical"}
         renderer: Zenoss.render.severity
         grid_display: true
@@ -236,17 +236,29 @@ classes:
       mac:
         label: MAC Address
         short_label: MAC
+        type: string
+        grid_display: false
+        details_display: true
       # bsnAPMonitorOnlyMode
       mode:
         label: Mode
+        type: string
+        grid_display: false
+        details_display: true
       # clcCdpApCachePlatform
       neighborModel:
         label: Neighbor Model
+        type: string
+        grid_display: false
+        details_display: true
         order: 15
       # bsnAPDot3MacAddress
       radioMac:
         label: Base Radio MAC Address
         short_label: Radio MAC
+        type: string
+        grid_display: false
+        details_display: true
 
   APGroup:
     label: Access Point Group
@@ -268,8 +280,7 @@ classes:
         content_width: 300
 
   APRadio:
-    label: Abstract AP Radio
-    short_label: Radio
+    label: Radio
     relationships:
       accessPoint:
         grid_display: false
@@ -299,8 +310,8 @@ classes:
         short_label: Channel
         grid_display: true
         order: 3
-        label_width: 40
-        content_width: 40
+        label_width: 80
+        content_width: 80
       # Aruba - wlanAPRadioType + wlanAPRadioHTMode
       # Cisco - bsnAPIfType + cLApDot11nSupport (11ac?)
       dot11:
@@ -329,10 +340,6 @@ classes:
     label: Access Point Radio
     short_label: Radio
     properties:
-      DEFAULTS:
-        type: string
-        grid_display: false
-        details_display: true
       # wlanAPRadioNumAssociatedClients
       clients:
         label: Clients
@@ -360,23 +367,28 @@ classes:
     label: Access Point Radio
     short_label: Radio
     properties:
-      DEFAULTS:
-        type: string
-        grid_display: false
-        details_display: true
       # bsnAPIfPhyAntennaMode
       mode:
         label: Antenna Mode
+        type: string
+        grid_display: false
+        details_display: true
         order: 8
       # bsnAPIfPhyChannelAssignment
       assignment:
         label: Channel Assignment
         short_label: Assignment
+        type: string
+        grid_display: false
+        details_display: true
         order: 5
       # bsnAPIfPhyAntennaDiversity
       diversity:
         label: Antenna Diversity
         short_label: Diversity
+        type: string
+        grid_display: false
+        details_display: true
         order: 9
       # bsnAPIfAdminStatus
       enabled:
@@ -386,6 +398,7 @@ classes:
         enum: {true: "clear", false: "debug"}
         renderer: Zenoss.render.severity
         grid_display: true
+        details_display: false
         order: 10
         label_width: 35
         content_width: 35
@@ -526,11 +539,15 @@ classes:
         label: Count
         type: int
         grid_display: true
+        order: 1
+        label_width: 35
+        content_width: 35
       # Aruba - sysExtLicenseExpires
       # Cisco - clmgmtLicenseValidityPeriodRemaining (calculate)
       expiration:
         label: Expiration Date
         short_label: Expiration
+        order: 4
       # Aruba - sysExtLicenseFlags
       #         E - enabled
       #         A - auto-generated
@@ -544,6 +561,7 @@ classes:
       #         6 - usage count consumed
       status:
         label: Status
+        order: 2
       statusSev:
         label: Status
         enum:
@@ -559,6 +577,9 @@ classes:
         renderer: Zenoss.render.severity
         grid_display: true
         details_display: false
+        order: 3
+        label_width: 35
+        content_width: 35
 
   # "VLANs" on Aruba
   # "Interfaces" on Cisco WLC (physical interfaces are "ports")
@@ -650,23 +671,6 @@ classes:
     # Cisco - cldlServerAddress
     # port
     # Cisco - cldlServerPortNum
-    #properties:
-    #  DEFAULTS:
-    #    type: string
-    #    grid_display: false
-    #    details_display: true
-    #  baseDN:
-    #    label: Base DN
-    #    short_label: Base
-    #    order: 5
-    #  user:
-    #    label: Bind User 
-    #    short_label: Bind
-    #    order: 7
-    #  userAttr:
-    #    label: User Attribute
-    #    short_label: Attribute
-    #    order: 6
 
   RadiusServer:
     base: [AAAServer]
@@ -766,21 +770,23 @@ classes:
     label: Wireless LAN
     short_label: WLAN
     properties:
-      DEFAULTS:
-        type: int
-        grid_display: true
-        details_display: true
       # wlanESSIDNumAccessPointsUp
       accessPoints:
         label: Access Points
         short_label: APs
+        type: int
         datapoint: wlanESSIDNumAccessPointsUp_wlanESSIDNumAccessPointsUp
+        grid_display: true
+        details_display: true
         label_width: 35
         content_width: 35
       # wlanESSIDNumStations
       clients:
         label: Clients
+        type: int
         datapoint: wlanESSIDNumStations_wlanESSIDNumStations
+        grid_display: true
+        details_display: true
         label_width: 35
         content_width: 35
 
@@ -789,9 +795,6 @@ classes:
     label: Wireless LAN
     short_label: WLAN
     properties:
-      DEFAULTS:
-        grid_display: false
-        details_display: true
       # bsnDot11EssBroadcastSsid
       broadcast:
         label: Broadcast
@@ -809,6 +812,7 @@ classes:
         type: int
         datapoint: bsnDot11EssNumberOfMobileStations_bsnDot11EssNumberOfMobileStations
         grid_display: true
+        details_display: true
         order: 8
         label_width: 35
         content_width: 35
@@ -817,6 +821,8 @@ classes:
         label: DHCP Server
         short_label: DHCP
         type: string
+        grid_display: false
+        details_display: true
         order: 13
       # bsnDot11EssAdminStatus
       enabled:
@@ -834,23 +840,31 @@ classes:
         label: LDAP Servers
         short_label: LDAP
         type: lines
+        grid_display: false
+        details_display: true
         order: 12
       # cLWlanProfileName
       profile:
         label: Profile
         type: string
+        grid_display: false
+        details_display: true
         order: 2
       # bsnDot11EssRadiusAcct(Primary|Secondary|Tertiary)Server
       radAcct:
         label: RADIUS Accounting Servers
         short_label: RADIUS Acct
         type: lines
+        grid_display: false
+        details_display: true
         order: 11
       # bsnDot11EssRadiusAuth(Primary|Secondary|Tertiary)Server
       radAuth:
         label: RADIUS Authentication Servers
         short_label: RADIUS Auth
         type: lines
+        grid_display: false
+        details_display: true
         order: 10
  
   # cLWlanLanSubType, cLWlanIsWired
@@ -861,8 +875,10 @@ classes:
       broadcast:
         type: boolean
         grid_display: false
+        details_display: false
       ssid:
         type: string
+        grid_display: false
         details_display: false
 
   # cLWlanLanSubType
@@ -873,9 +889,11 @@ classes:
       broadcast:
         type: boolean
         grid_display: false
+        details_display: false
       # This does not hide SSID from the details display...?
       ssid:
         type: string
+        grid_display: false
         details_display: false
 
 
