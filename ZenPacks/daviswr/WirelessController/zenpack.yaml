@@ -1080,7 +1080,7 @@ device_classes:
       # /Network/Cisco/Controller/AccessPointRadio
       AccessPointRadio:
         description: Radio stats from AIRESPACE-WIRELESS-MIB
-        targetPythonClass: ZenPacks.daviswr.WirelessController.CiscoWLAN
+        targetPythonClass: ZenPacks.daviswr.WirelessController.CiscoAPRadio
         datasources:
           DEFAULTS:
             type: SNMP
