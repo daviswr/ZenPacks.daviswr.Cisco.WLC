@@ -12,6 +12,7 @@ from Products.DataCollector.plugins.CollectorPlugin \
 from Products.DataCollector.plugins.DataMaps \
     import MultiArgs, RelationshipMap, ObjectMap
 
+
 class ArubaControllerAP(SnmpPlugin):
     maptype = 'ControllerAP'
 

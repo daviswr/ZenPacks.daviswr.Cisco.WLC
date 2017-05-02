@@ -9,6 +9,7 @@ from Products.DataCollector.plugins.CollectorPlugin \
 from Products.DataCollector.plugins.DataMaps \
     import MultiArgs
 
+
 class ArubaControllerFan(SnmpPlugin):
     maptype = 'FanMap'
     compname = 'hw'

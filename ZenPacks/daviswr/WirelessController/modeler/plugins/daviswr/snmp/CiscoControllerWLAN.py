@@ -11,6 +11,7 @@ from Products.DataCollector.plugins.CollectorPlugin \
 from Products.DataCollector.plugins.DataMaps \
     import MultiArgs, RelationshipMap, ObjectMap
 
+
 class CiscoControllerWLAN(SnmpPlugin):
     maptype = 'ControllerWLAN'
 
@@ -304,11 +305,11 @@ class CiscoControllerWLAN(SnmpPlugin):
                 wpa1_type = row.get('wpa1_type')
                 wpa2_type = row.get('wpa2_type')
                 if wpa1 and wpa1_type:
-                    mode = 'WPA-{}'.format(wpa1_type)
+                    mode = 'WPA-{0}'.format(wpa1_type)
                 if wpa2 and wpa2_type:
                     if wpa2_type == wpa1_type:
-                        mode = mode.replace('-{}'.format(wpa2_type), '')
-                    mode += '/WPA2-{}'.format(wpa2_type)
+                        mode = mode.replace('-{0}'.format(wpa2_type), '')
+                    mode += '/WPA2-{0}'.format(wpa2_type)
 
                 mode = mode.lstrip('/')
                 security = '{0} {1}'.format(mode, key_mgmt)
@@ -345,7 +346,7 @@ class CiscoControllerWLAN(SnmpPlugin):
             ldap = list()
             ldap_entry = ''
             for num in range(1, 4):
-                attr = 'ldap{}'.format(num)
+                attr = 'ldap{0}'.format(num)
                 if str(row.get(attr, 0)) in cldlServerTable:
                     server = cldlServerTable[str(row[attr])]
                     if 'ip' in server:
@@ -354,7 +355,7 @@ class CiscoControllerWLAN(SnmpPlugin):
                         else:
                             ldap_entry = str(server['ip'])
                         if 'port' in server:
-                            ldap_entry += ':{}'.format(server['port'])
+                            ldap_entry += ':{0}'.format(server['port'])
                         ldap.append(ldap_entry)
 
             # Update dictionary and create Object Map
@@ -367,7 +368,7 @@ class CiscoControllerWLAN(SnmpPlugin):
                 'security': security,
                 })
 
-            class_name = 'ZenPacks.daviswr.WirelessController.{}'.format(
+            class_name = 'ZenPacks.daviswr.WirelessController.{0}'.format(
                 row.get('subtype', 'CiscoWLAN')
                 )
 

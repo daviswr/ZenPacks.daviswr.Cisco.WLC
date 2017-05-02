@@ -1,3 +1,5 @@
+# pylint: disable=C0301
+
 __doc__ = """CiscoControllerAAA
 
 models AAA servers from a Cisco Wireless LAN Controller (WLC) running AireOS
@@ -11,6 +13,7 @@ from Products.DataCollector.plugins.CollectorPlugin \
     import SnmpPlugin, GetTableMap
 from Products.DataCollector.plugins.DataMaps \
     import MultiArgs, RelationshipMap, ObjectMap
+
 
 class CiscoControllerAAA(SnmpPlugin):
     maptype = 'ControllerAAA'
@@ -158,7 +161,7 @@ class CiscoControllerAAA(SnmpPlugin):
                 # Check ignore criteria, if we have an IP
                 if self.ip_in_nets(row['ip'], ignore_nets):
                     log.debug(
-                        'Skipping LDAP server %s due to zWlanServerIgnoreSubnets',
+                        'Skipping LDAP server %s due to zWlanServerIgnoreSubnets',  # noqa
                         row['ip']
                         )
                     continue
@@ -167,7 +170,7 @@ class CiscoControllerAAA(SnmpPlugin):
 
             # Have an IP but can't convert it to dotted-quad format
             elif 'ip' in row:
-                row['title'] = 'LDAP Server {}'.format(
+                row['title'] = 'LDAP Server {0}'.format(
                     snmpindex.replace('.', '')
                     )
             else:
@@ -177,7 +180,7 @@ class CiscoControllerAAA(SnmpPlugin):
             if 'enabled' in row:
                 row['enabled'] = True if 1 == row['enabled'] else False
 
-            row['id'] = self.prepId('ldap_{}'.format(row['title']))
+            row['id'] = self.prepId('ldap_{0}'.format(row['title']))
             row['snmpindex'] = snmpindex.strip('.')
             log.debug('Found LDAP server: %s', row['title'])
 
@@ -190,7 +193,7 @@ class CiscoControllerAAA(SnmpPlugin):
         # Empty SNMP RADIUS auth servers table if we're ignoring them
         if 'radiusauth' in ignore_types_list or 'radius' in ignore_types_list:
             log.info(
-                'Skipping all RADIUS auth servers due to zWlanServerIgnoreTypes'
+                'Skipping all RADIUS auth servers due to zWlanServerIgnoreTypes'  # noqa
                 )
             bsnRadiusAuthServerTable = dict()
         for snmpindex in bsnRadiusAuthServerTable:
@@ -201,7 +204,7 @@ class CiscoControllerAAA(SnmpPlugin):
                 continue
             elif self.ip_in_nets(ip, ignore_nets):
                 log.debug(
-                    'Skipping RADIUS auth server %s due to zWlanServerIgnoreSubnets',
+                    'Skipping RADIUS auth server %s due to zWlanServerIgnoreSubnets',  # noqa
                     ip
                     )
                 continue
@@ -211,7 +214,7 @@ class CiscoControllerAAA(SnmpPlugin):
                 row['enabled'] = True if 1 == row['enabled'] else False
 
             row['title'] = self.format_title(ip, row.get('port'))
-            row['id'] = self.prepId('radauth_{}'.format(row['title']))
+            row['id'] = self.prepId('radauth_{0}'.format(row['title']))
             row['snmpindex'] = snmpindex.strip('.')
             log.debug('Found RADIUS auth server: %s', row['title'])
 
@@ -223,7 +226,7 @@ class CiscoControllerAAA(SnmpPlugin):
         # Empty SNMP RADIUS acct servers table if we're ignoring them
         if 'radiusacct' in ignore_types_list or 'radius' in ignore_types_list:
             log.info(
-                'Skipping all RADIUS acct servers due to zWlanServerIgnoreTypes'
+                'Skipping all RADIUS acct servers due to zWlanServerIgnoreTypes'  # noqa
                 )
             bsnRadiusAccServerTable = dict()
         for snmpindex in bsnRadiusAccServerTable:
@@ -234,7 +237,7 @@ class CiscoControllerAAA(SnmpPlugin):
                 continue
             elif self.ip_in_nets(ip, ignore_nets):
                 log.debug(
-                    'Skipping RADIUS acct server %s due to zWlanServerIgnoreSubnets',
+                    'Skipping RADIUS acct server %s due to zWlanServerIgnoreSubnets',  # noqa
                     ip
                     )
                 continue
@@ -243,7 +246,7 @@ class CiscoControllerAAA(SnmpPlugin):
             if 'enabled' in row:
                 row['enabled'] = True if 1 == row['enabled'] else False
             row['title'] = self.format_title(ip, row.get('port'))
-            row['id'] = self.prepId('radacct_{}'.format(row['title']))
+            row['id'] = self.prepId('radacct_{0}'.format(row['title']))
             row['snmpindex'] = snmpindex.strip('.')
             log.debug('Found RADIUS acct server: %s', row['title'])
 
@@ -283,7 +286,7 @@ class CiscoControllerAAA(SnmpPlugin):
                 # Check ignore criteria, if we have an IP
                 if self.ip_in_nets(row['ip'], ignore_nets):
                     log.debug(
-                        'Skipping TACACS server %s due to zWlanServerIgnoreSubnets',
+                        'Skipping TACACS server %s due to zWlanServerIgnoreSubnets',  # noqa
                         row['ip']
                         )
                     continue
@@ -311,7 +314,7 @@ class CiscoControllerAAA(SnmpPlugin):
             log.debug('Found %s server: %s', tac_type, row['title'])
 
             rm.append(ObjectMap(
-                modname='ZenPacks.daviswr.WirelessController.{}Server'.format(
+                modname='ZenPacks.daviswr.WirelessController.{0}Server'.format(
                     tac_type
                     ),
                 data=row
@@ -320,11 +323,9 @@ class CiscoControllerAAA(SnmpPlugin):
         log.debug('%s RelMap:\n%s', self.name(), str(rm))
         return rm
 
-
     def format_title(self, ip, port):
         """Returns IP & port as colon-delimited string, if possible"""
         return '{0}:{1}'.format(ip, port) if port is not None else ip
-
 
     def ip_in_nets(self, ip, nets):
         """Determines if an IP address is in a subnet in a list"""

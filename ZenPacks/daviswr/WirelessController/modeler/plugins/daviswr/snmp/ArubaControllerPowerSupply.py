@@ -9,6 +9,7 @@ from Products.DataCollector.plugins.CollectorPlugin \
 from Products.DataCollector.plugins.DataMaps \
     import MultiArgs
 
+
 class ArubaControllerPowerSupply(SnmpPlugin):
     maptype = 'PowerSupply'
     compname = 'hw'

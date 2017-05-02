@@ -1,6 +1,6 @@
 __doc__ = """CiscoControllerTemperature
 
-models temperature sensors from an Cisco Wireless LAN Controller 
+models temperature sensors from an Cisco Wireless LAN Controller
 (WLC) running AireOS
 
 """
@@ -9,6 +9,7 @@ from Products.DataCollector.plugins.CollectorPlugin \
     import SnmpPlugin, GetTableMap
 from Products.DataCollector.plugins.DataMaps \
     import MultiArgs
+
 
 class CiscoControllerTemperature(SnmpPlugin):
     maptype = 'TemperatureSensorMap'
@@ -66,7 +67,7 @@ class CiscoControllerTemperature(SnmpPlugin):
             if len(bsnSensorTemperature) == 1:
                 name = 'Internal Temperature'
             else:
-                name = 'Temperature Sensor {}'.format(num)
+                name = 'Temperature Sensor {0}'.format(num)
 
             # Clean up attributes
             attr_map = dict()
@@ -85,7 +86,7 @@ class CiscoControllerTemperature(SnmpPlugin):
                 # modeler has ran before
                 if 5000 == row['temperature_celsius']:
                     log.debug(
-                        'Cisco vWLC or WiSM detected, skipping temperature sensor model'
+                        'Cisco vWLC or WiSM detected, skipping sensor model'
                         )
                     return None
                 temp_f = (row['temperature_celsius'] * (9/5)) + 32

@@ -1,6 +1,6 @@
 __doc__ = """CiscoControllerVLAN
 
-models VLAN interfaces from a Cisco Wireless LAN Controller 
+models VLAN interfaces from a Cisco Wireless LAN Controller
 (WLC) running AireOS
 
 """
@@ -12,6 +12,7 @@ from Products.DataCollector.plugins.CollectorPlugin \
     import SnmpPlugin, GetTableMap
 from Products.DataCollector.plugins.DataMaps \
     import MultiArgs, RelationshipMap, ObjectMap
+
 
 class CiscoControllerVLAN(SnmpPlugin):
     maptype = 'ControllerVLAN'
@@ -72,7 +73,11 @@ class CiscoControllerVLAN(SnmpPlugin):
         if ignore_names_regex:
             log.info('zWlanInterfaceIgnoreNames set to %s', ignore_names_regex)
 
-        ignore_net_text = getattr(device, 'zWlanInterfaceIgnoreSubnets', list())
+        ignore_net_text = getattr(
+            device,
+            'zWlanInterfaceIgnoreSubnets',
+            list()
+            )
         ignore_nets = list()
         if ignore_net_text:
             log.info(
@@ -106,19 +111,19 @@ class CiscoControllerVLAN(SnmpPlugin):
                 continue
             elif ignore_names_regex and re.search(ignore_names_regex, name):
                 log.debug(
-                    'Skipping VLAN interface %s due to zWlanInterfaceIgnoreNames',
+                    'Skipping VLAN %s due to zWlanInterfaceIgnoreNames',
                     name
                     )
                 continue
             elif self.ip_in_nets(ip, ignore_nets):
                 log.debug(
-                    'Skipping VLAN interface %s due to zWlanInterfaceIgnoreSubnets',
+                    'Skipping VLAN %s due to zWlanInterfaceIgnoreSubnets',
                     name
                     )
                 continue
             elif str(vlan) in ignore_vlan_list:
                 log.debug(
-                    'Skipping VLAN interface %s due to zWlanInterfaceIgnoreVlans',
+                    'Skipping VLAN %s due to zWlanInterfaceIgnoreVlans',
                     name
                     )
                 continue
@@ -131,7 +136,7 @@ class CiscoControllerVLAN(SnmpPlugin):
             if 'mac' in row:
                 row['mac'] = self.asmac(row.get('mac'))
 
-            row['id'] = self.prepId('vlan_{}'.format(name).replace('-', '_'))
+            row['id'] = self.prepId('vlan_{0}'.format(name).replace('-', '_'))
             row['snmpindex'] = snmpindex.strip('.')
             log.debug('Found VLAN interface: %s', name)
 
@@ -142,7 +147,6 @@ class CiscoControllerVLAN(SnmpPlugin):
 
         log.debug('%s RelMap:\n%s', self.name(), str(rm))
         return rm
-
 
     def ip_in_nets(self, ip, nets):
         """Determines if an IP address is in a subnet in a list"""

@@ -1,3 +1,5 @@
+# pylint: disable=C0301
+
 __doc__ = """CiscoControllerAP
 
 models access points and AP groups from a Cisco Wireless LAN Controller
@@ -12,6 +14,7 @@ from Products.DataCollector.plugins.CollectorPlugin \
     import SnmpPlugin, GetTableMap
 from Products.DataCollector.plugins.DataMaps \
     import MultiArgs, RelationshipMap, ObjectMap
+
 
 class CiscoControllerAP(SnmpPlugin):
     maptype = 'ControllerAP'
@@ -168,7 +171,6 @@ class CiscoControllerAP(SnmpPlugin):
             ),
         )
 
-
     def process(self, device, results, log):
         """collect snmp information from this device"""
         log.info('processing %s for device %s', self.name(), device.id)
@@ -268,7 +270,6 @@ class CiscoControllerAP(SnmpPlugin):
 
             ap_groups[name] = row
 
-
         # Access Points
         ap_radios = dict()
         for snmpindex in bsnAPTable:
@@ -349,12 +350,12 @@ class CiscoControllerAP(SnmpPlugin):
             row['hwVersion'] = entity.get('hwVersion', None)
 
             # AP CDP neighbor
-            cdpindex = '{}.1'.format(snmpindex)
+            cdpindex = '{0}.1'.format(snmpindex)
             if clcCdpApCacheTable and cdpindex in clcCdpApCacheTable:
                 cdp_entry = clcCdpApCacheTable[cdpindex]
                 inet_type = cdp_entry.get('neighborIpType', '')
                 if inet_type and 1 == inet_type:
-                    cdp_entry['neighborIp'] = self.asip(cdp_entry['neighborIp'])
+                    cdp_entry['neighborIp'] = self.asip(cdp_entry['neighborIp'])  # noqa
                 row.update(clcCdpApCacheTable[cdpindex])
 
             row.update({
@@ -371,7 +372,6 @@ class CiscoControllerAP(SnmpPlugin):
 
             ap_groups[group]['access_points'][name] = row
             ap_radios[snmpindex.strip('.')] = dict()
-
 
         # AP Radios
         for snmpindex in bsnAPIfTable:
@@ -490,7 +490,7 @@ class CiscoControllerAP(SnmpPlugin):
                 ))
 
             ap_rm = RelationshipMap(
-                compname='apGroups/{}'.format(group_id),
+                compname='apGroups/{0}'.format(group_id),
                 relname='accessPoints',
                 modname='ZenPacks.daviswr.WirelessController.AccessPoint'
                 )
@@ -520,7 +520,7 @@ class CiscoControllerAP(SnmpPlugin):
                         radio_index
                         )
                     radio_rm.append(ObjectMap(
-                        modname='ZenPacks.daviswr.WirelessController.CiscoAPRadio',
+                        modname='ZenPacks.daviswr.WirelessController.CiscoAPRadio',  # noqa
                         data=radio
                         ))
                 # Append this AP's radio RelMap
@@ -535,7 +535,6 @@ class CiscoControllerAP(SnmpPlugin):
         log.debug('%s RelMaps:\n%s', self.name(), str(maps))
 
         return maps
-
 
     def ip_in_nets(self, ip, nets):
         """Determines if an IP address is in a subnet in a list"""

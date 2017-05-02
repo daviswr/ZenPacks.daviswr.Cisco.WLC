@@ -1,6 +1,8 @@
+# pylint: disable=C0301
+
 __doc__ = """CiscoControllerDevice
 
-gathers OS and hardware information from a Cisco Wireless LAN Controller 
+gathers OS and hardware information from a Cisco Wireless LAN Controller
 (WLC) running AireOS
 
 """
@@ -9,6 +11,7 @@ from Products.DataCollector.plugins.CollectorPlugin \
     import SnmpPlugin, GetMap
 from Products.DataCollector.plugins.DataMaps \
     import MultiArgs, ObjectMap
+
 
 class CiscoControllerDevice(SnmpPlugin):
     maptype = 'ControllerDevice'
@@ -46,7 +49,7 @@ class CiscoControllerDevice(SnmpPlugin):
         getdata, tabledata = results
         if getdata is None:
             log.warn(
-                'Unable to get data from AIRESPACE-SWITCHING-MIB on %s - skipping model',
+                'Unable to get data from AIRESPACE-SWITCHING-MIB on %s - skipping model',  # noqa
                 device.id
                 )
             return None
@@ -59,7 +62,10 @@ class CiscoControllerDevice(SnmpPlugin):
             manufacturer = 'Cisco'
 
         if 'model' in getdata:
-            getdata['setHWProductKey'] = MultiArgs(getdata['model'], manufacturer)
+            getdata['setHWProductKey'] = MultiArgs(
+                getdata['model'],
+                manufacturer
+                )
 
         # Software version
         os = 'AireOS'
@@ -69,7 +75,7 @@ class CiscoControllerDevice(SnmpPlugin):
 
         # Mobility Domain
         if 'mobility' in getdata:
-            getdata.update({'mobilityDomains': [getdata['mobility'],]})
+            getdata.update({'mobilityDomains': [getdata['mobility'], ]})
 
         # Operating Temperature threshold
         if 'environment' in getdata:

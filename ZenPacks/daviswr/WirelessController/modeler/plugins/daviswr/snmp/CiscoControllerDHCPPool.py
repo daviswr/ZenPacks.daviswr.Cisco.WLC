@@ -12,6 +12,7 @@ from Products.DataCollector.plugins.CollectorPlugin \
 from Products.DataCollector.plugins.DataMaps \
     import MultiArgs, RelationshipMap, ObjectMap
 
+
 class CiscoControllerDHCPPool(SnmpPlugin):
     maptype = 'ControllerDHCPPool'
 
@@ -166,7 +167,6 @@ class CiscoControllerDHCPPool(SnmpPlugin):
         log.debug('%s RelMap:\n%s', self.name(), str(rm))
 
         return rm
-
 
     def ip_in_nets(self, ip, nets):
         """Determines if an IP address is in a subnet in a list"""
