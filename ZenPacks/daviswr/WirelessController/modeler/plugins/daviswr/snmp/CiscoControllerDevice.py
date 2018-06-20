@@ -58,7 +58,7 @@ class CiscoControllerDevice(SnmpPlugin):
 
         # Hardware model
         manufacturer = getdata.get('manufacturer', '')
-        if manufacturer.lower().find('cisco') > -1 or len(manufacturer) == 0:
+        if 'cisco' in manufacturer.lower() or len(manufacturer) == 0:
             manufacturer = 'Cisco'
 
         if 'model' in getdata:

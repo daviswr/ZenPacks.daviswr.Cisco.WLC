@@ -36,7 +36,7 @@ class CiscoControllerTemperature(SnmpPlugin):
         """determine if this modeler should run"""
         ignore = False
         model = str(device.hw.getModelName())
-        if model.find('VM') > -1 or model.find('WISM') > -1:
+        if 'VM' in model or 'WISM' in model:
             log.info('Cisco vWLC and WiSM lack temperature sensors, skipping')
             ignore = True
         return not ignore

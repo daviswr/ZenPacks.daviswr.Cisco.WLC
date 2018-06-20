@@ -65,7 +65,7 @@ class CiscoControllerDHCPPool(SnmpPlugin):
         """determine if this modeler should run"""
         ignore = False
         model = str(device.hw.getModelName())
-        if model.find('VM') > -1:
+        if 'VM' in model:
             log.info('Cisco Virtual WLC does not support DHCP pools, skipping')
             ignore = True
         return not ignore
