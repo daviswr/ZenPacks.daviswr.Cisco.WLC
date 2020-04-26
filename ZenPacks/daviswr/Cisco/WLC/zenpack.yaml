@@ -731,7 +731,8 @@ device_classes:
     templates:
       # /Network/Cisco/Controller/Device
       Device:
-        description: CPU & memory utilization from AIRESPACE-SWITCHING-MIB
+        description: System-level metrics from AIRESPACE-SWITCHING-MIB and CISCO-LWAPP-SYS-MIB
+        # https://www.cisco.com/c/en/us/support/docs/wireless/3504-wireless-controller/214452-monitoring-cisco-aireos-wlc-via-snmp-usi.html
         targetPythonClass: ZenPacks.daviswr.Cisco.WLC.Controller
         datasources:
           DEFAULTS:
@@ -755,7 +756,20 @@ device_classes:
                 aliases:
                   freeMemory: "1024,*"
                   usedMemory: "-1024,*,${here/hw/totalMemory},+"
+                  # clsSysCurrentMemoryUsage shows 0% even when 985 MB of 1 GB is used
                   mem_pct: "-1024,*,${here/hw/totalMemory},+,${here/hw/totalMemory},/,100,*"
+          clsSysApConnectCount:
+            oid: .1.3.6.1.4.1.9.9.618.1.8.4.0
+            datapoints:
+              clsSysApConnectCount:
+                description: Count of AP's that are connected with WLC
+                rrdtype: GAUGE
+          clsMaxClientsCount:
+            oid: .1.3.6.1.4.1.9.9.618.1.8.12.0
+            datapoints:
+              clsMaxClientsCount:
+                description: Maximum clients present on the controller
+                rrdtype: GAUGE
           sysUpTime:
             oid: .1.3.6.1.2.1.1.3.0
             datapoints:
@@ -790,6 +804,22 @@ device_classes:
               Free:
                 rpn: "1024,*"
                 color: cccccc
+          Controller Access Points:
+            units: APs
+            graphpoints:
+              APs:
+                dpName: clsSysApConnectCount_clsSysApConnectCount
+                lineType: AREA
+                stacked: true
+                colorindex: 0
+          Controller Total Clients:
+            units: Clients
+            graphpoints:
+              Clients:
+                dpName: clsMaxClientsCount_clsMaxClientsCount
+                lineType: AREA
+                stacked: true
+                colorindex: 0
 
       # /Network/Cisco/Controller/AccessPoint
       AccessPoint:
