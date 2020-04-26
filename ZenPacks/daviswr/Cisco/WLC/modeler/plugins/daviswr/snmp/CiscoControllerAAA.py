@@ -19,7 +19,7 @@ class CiscoControllerAAA(SnmpPlugin):
     maptype = 'ControllerAAA'
 
     relname = 'aaaServers'
-    modname = 'ZenPacks.daviswr.WirelessController.AAAServer'
+    modname = 'ZenPacks.daviswr.Cisco.WLC.AAAServer'
 
     deviceProperties = SnmpPlugin.deviceProperties + (
         'zWlanServerIgnoreSubnets',
@@ -134,7 +134,7 @@ class CiscoControllerAAA(SnmpPlugin):
             for net in ignore_net_text:
                 try:
                     ignore_nets.append(ipaddr.IPNetwork(net))
-                except:
+                except ValueError:
                     log.warn('%s is not a valid CIDR address', net)
                     continue
 
@@ -185,7 +185,7 @@ class CiscoControllerAAA(SnmpPlugin):
             log.debug('Found LDAP server: %s', row['title'])
 
             rm.append(ObjectMap(
-                modname='ZenPacks.daviswr.WirelessController.LDAPServer',
+                modname='ZenPacks.daviswr.Cisco.WLC.LDAPServer',
                 data=row
                 ))
 
@@ -200,7 +200,7 @@ class CiscoControllerAAA(SnmpPlugin):
             row = bsnRadiusAuthServerTable[snmpindex]
             ip = row.get('ip')
 
-            if ip is None:
+            if not ip:
                 continue
             elif self.ip_in_nets(ip, ignore_nets):
                 log.debug(
@@ -219,7 +219,7 @@ class CiscoControllerAAA(SnmpPlugin):
             log.debug('Found RADIUS auth server: %s', row['title'])
 
             rm.append(ObjectMap(
-                modname='ZenPacks.daviswr.WirelessController.RadAuthServer',
+                modname='ZenPacks.daviswr.Cisco.WLC.RadAuthServer',
                 data=row
                 ))
 
@@ -233,7 +233,7 @@ class CiscoControllerAAA(SnmpPlugin):
             row = bsnRadiusAccServerTable[snmpindex]
             ip = row.get('ip')
 
-            if ip is None:
+            if not ip:
                 continue
             elif self.ip_in_nets(ip, ignore_nets):
                 log.debug(
@@ -251,7 +251,7 @@ class CiscoControllerAAA(SnmpPlugin):
             log.debug('Found RADIUS acct server: %s', row['title'])
 
             rm.append(ObjectMap(
-                modname='ZenPacks.daviswr.WirelessController.RadAcctServer',
+                modname='ZenPacks.daviswr.Cisco.WLC.RadAcctServer',
                 data=row
                 ))
 
@@ -314,7 +314,7 @@ class CiscoControllerAAA(SnmpPlugin):
             log.debug('Found %s server: %s', tac_type, row['title'])
 
             rm.append(ObjectMap(
-                modname='ZenPacks.daviswr.WirelessController.{0}Server'.format(
+                modname='ZenPacks.daviswr.Cisco.WLC.{0}Server'.format(
                     tac_type
                     ),
                 data=row
@@ -335,7 +335,7 @@ class CiscoControllerAAA(SnmpPlugin):
                 if net.Contains(ipaddr.IPAddress(ip)):
                     contains = True
                     break
-            except:
+            except ValueError:
                 log.warn('%s ip not a valid IP address', ip)
                 break
         return contains

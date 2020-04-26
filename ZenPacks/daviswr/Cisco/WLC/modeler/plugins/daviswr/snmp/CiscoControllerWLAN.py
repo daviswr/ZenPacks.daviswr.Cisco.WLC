@@ -16,7 +16,7 @@ class CiscoControllerWLAN(SnmpPlugin):
     maptype = 'ControllerWLAN'
 
     relname = 'wlans'
-    modname = 'ZenPacks.daviswr.WirelessController.WLAN'
+    modname = 'ZenPacks.daviswr.Cisco.WLC.WLAN'
 
     deviceProperties = SnmpPlugin.deviceProperties + (
         'zWlanWlanIgnoreNames',
@@ -144,7 +144,7 @@ class CiscoControllerWLAN(SnmpPlugin):
         log.debug('SNMP Tables:\n%s', tabledata)
 
         bsnDot11EssTable = tabledata.get('bsnDot11EssTable')
-        if bsnDot11EssTable is None:
+        if not bsnDot11EssTable:
             log.error('Unable to get bsnDot11EssTable from %s', device.id)
             return None
         else:
@@ -154,7 +154,7 @@ class CiscoControllerWLAN(SnmpPlugin):
                 )
 
         cLWlanConfigTable = tabledata.get('cLWlanConfigTable')
-        if cLWlanConfigTable is None:
+        if not cLWlanConfigTable:
             log.error('Unable to get cLWlanConfigTable from %s', device.id)
             return None
         else:
@@ -164,7 +164,7 @@ class CiscoControllerWLAN(SnmpPlugin):
                 )
 
         cLWSecDot11EssCckmTable = tabledata.get('cLWSecDot11EssCckmTable')
-        if cLWSecDot11EssCckmTable is None:
+        if not cLWSecDot11EssCckmTable:
             log.error(
                 'Unable to get cLWSecDot11EssCckmTable from %s',
                 device.id
@@ -177,7 +177,7 @@ class CiscoControllerWLAN(SnmpPlugin):
                 )
 
         cLWSecDot11EssCkipTable = tabledata.get('cLWSecDot11EssCkipTable')
-        if cLWSecDot11EssCkipTable is None:
+        if not cLWSecDot11EssCkipTable:
             log.error(
                 'Unable to get cLWSecDot11EssCkipTable from %s',
                 device.id
@@ -221,7 +221,7 @@ class CiscoControllerWLAN(SnmpPlugin):
             row = bsnDot11EssTable[snmpindex]
             name = row.get('title', None)
 
-            if name is None:
+            if not name:
                 continue
             elif ignore_names_regex and re.search(ignore_names_regex, name):
                 log.debug(
@@ -265,9 +265,9 @@ class CiscoControllerWLAN(SnmpPlugin):
                 }
 
             attr_map['subtype'] = {
-                1: 'CiscoWLAN',
-                2: 'CiscoGuestLAN',
-                3: 'CiscoRemoteLAN',
+                1: 'WirelessLAN',
+                2: 'GuestLAN',
+                3: 'RemoteLAN',
                 }
 
             # TKIP is a protocol using the RC4 cipher
@@ -368,8 +368,8 @@ class CiscoControllerWLAN(SnmpPlugin):
                 'security': security,
                 })
 
-            class_name = 'ZenPacks.daviswr.WirelessController.{0}'.format(
-                row.get('subtype', 'CiscoWLAN')
+            class_name = 'ZenPacks.daviswr.Cisco.WLC.{0}'.format(
+                row.get('subtype', 'WirelessLAN')
                 )
 
             rm.append(ObjectMap(modname=class_name, data=row))

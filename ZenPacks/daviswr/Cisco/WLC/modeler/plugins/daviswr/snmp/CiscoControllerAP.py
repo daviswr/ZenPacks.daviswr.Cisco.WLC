@@ -241,7 +241,7 @@ class CiscoControllerAP(SnmpPlugin):
             for net in ignore_net_text:
                 try:
                     ignore_nets.append(ipaddr.IPNetwork(net))
-                except:
+                except ValueError:
                     log.warn('%s is not a valid CIDR address', net)
                     continue
 
@@ -251,7 +251,7 @@ class CiscoControllerAP(SnmpPlugin):
             row = bsnAPGroupsVlanTable[snmpindex]
             name = row.get('title', None)
 
-            if name is None:
+            if not name:
                 continue
             elif ignore_group_regex and re.search(ignore_group_regex, name):
                 log.debug(
@@ -279,7 +279,7 @@ class CiscoControllerAP(SnmpPlugin):
             ip = row.get('ip', '')
             group = row.get('group', 'default-group')
 
-            if name is None:
+            if not name:
                 continue
             elif ignore_ap_regex and re.search(ignore_ap_regex, name):
                 log.debug(
@@ -476,7 +476,7 @@ class CiscoControllerAP(SnmpPlugin):
         # Build Relationship Maps
         group_rm = RelationshipMap(
             relname='apGroups',
-            modname='ZenPacks.daviswr.WirelessController.APGroup'
+            modname='ZenPacks.daviswr.Cisco.WLC.APGroup'
             )
         ap_rm_list = list()
         radio_rm_list = list()
@@ -485,20 +485,20 @@ class CiscoControllerAP(SnmpPlugin):
             group_id = self.prepId(group_name)
             group = ap_groups[group_name]
             group_rm.append(ObjectMap(
-                modname='ZenPacks.daviswr.WirelessController.APGroup',
+                modname='ZenPacks.daviswr.Cisco.WLC.APGroup',
                 data=group
                 ))
 
             ap_rm = RelationshipMap(
                 compname='apGroups/{0}'.format(group_id),
                 relname='accessPoints',
-                modname='ZenPacks.daviswr.WirelessController.AccessPoint'
+                modname='ZenPacks.daviswr.Cisco.WLC.AccessPoint'
                 )
             for ap_name in group['access_points']:
                 ap_id = self.prepId(ap_name)
                 ap = group['access_points'][ap_name]
                 ap_rm.append(ObjectMap(
-                    modname='ZenPacks.daviswr.WirelessController.CiscoAP',
+                    modname='ZenPacks.daviswr.Cisco.WLC.AccessPoint',
                     data=ap
                     ))
                 radio_rm = RelationshipMap(
@@ -507,7 +507,7 @@ class CiscoControllerAP(SnmpPlugin):
                         ap_id
                         ),
                     relname='apRadios',
-                    modname='ZenPacks.daviswr.WirelessController.APRadio'
+                    modname='ZenPacks.daviswr.Cisco.WLC.APRadio'
                     )
                 for radio_index in ap_radios[ap['snmpindex']]:
                     radio = ap_radios[ap['snmpindex']][radio_index]
@@ -520,7 +520,7 @@ class CiscoControllerAP(SnmpPlugin):
                         radio_index
                         )
                     radio_rm.append(ObjectMap(
-                        modname='ZenPacks.daviswr.WirelessController.CiscoAPRadio',  # noqa
+                        modname='ZenPacks.daviswr.Cisco.WLC.APRadio',  # noqa
                         data=radio
                         ))
                 # Append this AP's radio RelMap
@@ -544,7 +544,7 @@ class CiscoControllerAP(SnmpPlugin):
                 if net.Contains(ipaddr.IPAddress(ip)):
                     contains = True
                     break
-            except:
+            except ValueError:
                 log.warn('%s ip not a valid IP address', ip)
                 break
         return contains

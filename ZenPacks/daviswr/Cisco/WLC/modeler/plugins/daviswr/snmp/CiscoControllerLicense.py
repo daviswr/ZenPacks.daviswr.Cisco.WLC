@@ -18,7 +18,7 @@ class CiscoControllerLicense(SnmpPlugin):
     maptype = 'ControllerLicense'
 
     relname = 'licenses'
-    modname = 'ZenPacks.daviswr.WirelessController.License'
+    modname = 'ZenPacks.daviswr.Cisco.WLC.License'
 
     clmgmtLicenseInfoEntry = {
         # clmgmtLicenseFeatureName
@@ -126,7 +126,7 @@ class CiscoControllerLicense(SnmpPlugin):
                 })
 
             rm.append(ObjectMap(
-                modname='ZenPacks.daviswr.WirelessController.License',
+                modname='ZenPacks.daviswr.Cisco.WLC.License',
                 data=row
                 ))
 

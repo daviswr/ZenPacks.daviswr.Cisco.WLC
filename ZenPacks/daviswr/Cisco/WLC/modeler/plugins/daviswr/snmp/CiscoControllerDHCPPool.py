@@ -17,7 +17,7 @@ class CiscoControllerDHCPPool(SnmpPlugin):
     maptype = 'ControllerDHCPPool'
 
     relname = 'dhcpPools'
-    modname = 'ZenPacks.daviswr.WirelessController.DHCPPool'
+    modname = 'ZenPacks.daviswr.Cisco.WLC.DHCPPool'
 
     deviceProperties = SnmpPlugin.deviceProperties + (
         'zWlanDhcpIgnoreNames',
@@ -78,7 +78,7 @@ class CiscoControllerDHCPPool(SnmpPlugin):
         log.debug('SNMP Tables:\n%s', tabledata)
 
         agentDhcpScopeTable = tabledata.get('agentDhcpScopeTable')
-        if agentDhcpScopeTable is None:
+        if not agentDhcpScopeTable:
             log.error('Unable to get agentDhcpScopeTable for %s', device.id)
             return None
         else:
@@ -102,7 +102,7 @@ class CiscoControllerDHCPPool(SnmpPlugin):
             for net in ignore_net_text:
                 try:
                     ignore_nets.append(ipaddr.IPNetwork(net))
-                except:
+                except ValueError:
                     log.warn('%s is not a valid CIDR address', net)
                     continue
 
@@ -114,7 +114,7 @@ class CiscoControllerDHCPPool(SnmpPlugin):
             name = row.get('title', None)
             network = row.get('network', '')
 
-            if name is None:
+            if not name:
                 continue
             elif ignore_names_regex and re.search(ignore_names_regex, name):
                 log.debug(
@@ -160,7 +160,7 @@ class CiscoControllerDHCPPool(SnmpPlugin):
                 })
 
             rm.append(ObjectMap(
-                modname='ZenPacks.daviswr.WirelessController.DHCPPool',
+                modname='ZenPacks.daviswr.Cisco.WLC.DHCPPool',
                 data=row
                 ))
 
@@ -176,7 +176,7 @@ class CiscoControllerDHCPPool(SnmpPlugin):
                 if net.Contains(ipaddr.IPAddress(ip)):
                     contains = True
                     break
-            except:
+            except ValueError:
                 log.warn('%s ip not a valid IP address', ip)
                 break
         return contains

@@ -2,15 +2,15 @@
 # These variables are overwritten by Zenoss when the ZenPack is exported
 # or saved.  Do not modify them directly here.
 # NB: PACKAGES is deprecated
-NAME = "ZenPacks.daviswr.WirelessController"
-VERSION = "0.1.0-dev"
+NAME = "ZenPacks.daviswr.Cisco.WLC"
+VERSION = "0.2.0-dev"
 AUTHOR = "Wes Davis"
 LICENSE = ""
-NAMESPACE_PACKAGES = ['ZenPacks', 'ZenPacks.daviswr']
-PACKAGES = ['ZenPacks', 'ZenPacks.daviswr', 'ZenPacks.daviswr.WirelessController']
+NAMESPACE_PACKAGES = ['ZenPacks', 'ZenPacks.daviswr', 'ZenPacks.daviswr.Cisco']
+PACKAGES = ['ZenPacks', 'ZenPacks.daviswr', 'ZenPacks.daviswr.Cisco', 'ZenPacks.daviswr.Cisco.WLC']
 INSTALL_REQUIRES = ['ZenPacks.zenoss.ZenPackLib']
 COMPAT_ZENOSS_VERS = ">=4.2.5"
-PREV_ZENPACK_NAME = ""
+PREV_ZENPACK_NAME = "ZenPacks.daviswr.WirelessController"
 # STOP_REPLACEMENTS
 ################################
 # Zenoss will not overwrite any changes you make below here.

@@ -47,7 +47,7 @@ class CiscoControllerDevice(SnmpPlugin):
             device.id
             )
         getdata, tabledata = results
-        if getdata is None:
+        if not getdata:
             log.warn(
                 'Unable to get data from AIRESPACE-SWITCHING-MIB on %s - skipping model',  # noqa
                 device.id
@@ -58,7 +58,7 @@ class CiscoControllerDevice(SnmpPlugin):
 
         # Hardware model
         manufacturer = getdata.get('manufacturer', '')
-        if 'cisco' in manufacturer.lower() or len(manufacturer) == 0:
+        if 'cisco' in manufacturer.lower() or not manufacturer:
             manufacturer = 'Cisco'
 
         if 'model' in getdata:
@@ -93,7 +93,7 @@ class CiscoControllerDevice(SnmpPlugin):
             getdata.update(env_map.get(getdata['environment'], dict()))
 
         maps.append(ObjectMap(
-            modname='ZenPacks.daviswr.WirelessController.CiscoController',
+            modname='ZenPacks.daviswr.Cisco.WLC.Controller',
             data=getdata
             ))
 

@@ -18,7 +18,7 @@ class CiscoControllerVLAN(SnmpPlugin):
     maptype = 'ControllerVLAN'
 
     relname = 'vlanInterfaces'
-    modname = 'ZenPacks.daviswr.WirelessController.VlanInterface'
+    modname = 'ZenPacks.daviswr.Cisco.WLC.VlanInterface'
 
     deviceProperties = SnmpPlugin.deviceProperties + (
         'zWlanInterfaceIgnoreNames',
@@ -56,7 +56,7 @@ class CiscoControllerVLAN(SnmpPlugin):
         log.debug('SNMP Tables:\n%s', tabledata)
 
         agentInterfaceConfigTable = tabledata.get('agentInterfaceConfigTable')
-        if agentInterfaceConfigTable is None:
+        if not agentInterfaceConfigTable:
             log.error(
                 'Unable to get agentInterfaceConfigTable from %s',
                 device.id
@@ -87,7 +87,7 @@ class CiscoControllerVLAN(SnmpPlugin):
             for net in ignore_net_text:
                 try:
                     ignore_nets.append(ipaddr.IPNetwork(net))
-                except:
+                except ValueError:
                     log.warn('%s is not a valid CIDR address', net)
                     continue
 
@@ -107,7 +107,7 @@ class CiscoControllerVLAN(SnmpPlugin):
             ip = row.get('ip', None)
             vlan = row.get('vlan', None)
 
-            if name is None:
+            if not name:
                 continue
             elif ignore_names_regex and re.search(ignore_names_regex, name):
                 log.debug(
@@ -141,7 +141,7 @@ class CiscoControllerVLAN(SnmpPlugin):
             log.debug('Found VLAN interface: %s', name)
 
             rm.append(ObjectMap(
-                modname='ZenPacks.daviswr.WirelessController.VlanInterface',
+                modname='ZenPacks.daviswr.Cisco.WLC.VlanInterface',
                 data=row
                 ))
 
@@ -156,7 +156,7 @@ class CiscoControllerVLAN(SnmpPlugin):
                 if net.Contains(ipaddr.IPAddress(ip)):
                     contains = True
                     break
-            except:
+            except ValueError:
                 log.warn('%s ip not a valid IP address', ip)
                 break
         return contains

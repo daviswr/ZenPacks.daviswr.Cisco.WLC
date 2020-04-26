@@ -49,7 +49,7 @@ class CiscoControllerTemperature(SnmpPlugin):
         log.debug('SNMP Tables:\n%s', tabledata)
 
         bsnSensorTemperature = tabledata.get('bsnSensorTemperature')
-        if bsnSensorTemperature is None:
+        if not bsnSensorTemperature:
             log.error('Unable to get bsnSensorTemperature for %s', device.id)
             return None
         else:
